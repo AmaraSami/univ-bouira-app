@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Blue background layer -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" /> <!-- Replace with the exact color code of the blue -->
+        </shape>
+    </item>
+
+    <!-- White box with rounded corners -->
+    <item android:top="650dp"> <!-- Adjust top margin as per your design -->
+        <shape android:shape="rectangle">
+            <solid android:color="#007BA7" />
+            <corners android:topLeftRadius="15dp"
+                android:topRightRadius="15dp" />
+            <stroke android:width="1dp" android:color="#4DBF20" />
+        </shape>
+    </item>
+
+</layer-list>

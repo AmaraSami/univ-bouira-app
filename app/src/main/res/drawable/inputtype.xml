@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/transparent" />
+
+    <!-- Set the corner radius for the rounded rectangle -->
+    <corners android:radius="25dp" />
+
+    <!-- Define the green stroke -->
+    <stroke
+        android:width="2dp"
+        android:color="#005D22" /> <!-- Green color -->
+
+    <!-- Optional padding inside the border -->
+    <padding
+        android:left="4dp"
+        android:right="4dp"
+        android:top="4dp"
+        android:bottom="4dp" />
+</shape>
