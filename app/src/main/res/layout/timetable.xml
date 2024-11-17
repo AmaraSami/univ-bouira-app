@@ -1,12 +1,11 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/timetable"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/background_profile"
-    tools:context=".MainActivity"
-    android:id="@+id/timetable">
+    tools:context=".MainActivity">
 
     <ImageView
         android:id="@+id/txtlogo"
@@ -24,22 +23,22 @@
         android:id="@+id/semester_buttons_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/txtlogo"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtlogo">
 
         <Button
             android:id="@+id/semester_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Semester"
+            android:layout_marginEnd="8dp"
             android:backgroundTint="#007BA7"
+            android:text="Semester"
             android:textColor="#FFFFFF"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="8dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/semestre4_button"
@@ -58,270 +57,487 @@
         android:id="@+id/timetable_scrollview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/semester_buttons_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="16dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/semester_buttons_layout">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <HorizontalScrollView
+            android:id="@+id/horizontal_scrollview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
 
-            <TextView
-                android:id="@+id/time_header"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#D0D0D0"
-                android:padding="8dp"
-                android:text=""
-                app:layout_constraintEnd_toEndOf="@+id/time_08_00"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/saturday_header"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="S"
-                android:gravity="center"
-                android:background="#E0E0E0"
-                android:padding="8dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/time_header"
-                app:layout_constraintWidth_percent="0.14" />
+                <TextView
+                    android:id="@+id/time_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#D0D0D0"
+                    android:padding="8dp"
+                    android:text=""
+                    app:layout_constraintEnd_toEndOf="@+id/time_08_00"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/sunday_header"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Su"
-                android:gravity="center"
-                android:background="#E0E0E0"
-                android:padding="8dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/saturday_header"
-                app:layout_constraintWidth_percent="0.14" />
+                <TextView
+                    android:id="@+id/saturday_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#E0E0E0"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="S"
+                    app:layout_constraintStart_toEndOf="@id/time_header"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.14" />
 
-            <TextView
-                android:id="@+id/monday_header"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="M"
-                android:gravity="center"
-                android:background="#E0E0E0"
-                android:padding="8dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/sunday_header"
-                app:layout_constraintWidth_percent="0.14" />
+                <TextView
+                    android:id="@+id/sunday_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#E0E0E0"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Su"
+                    app:layout_constraintStart_toEndOf="@id/saturday_header"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.14" />
 
-            <TextView
-                android:id="@+id/tuesday_header"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="T"
-                android:gravity="center"
-                android:background="#E0E0E0"
-                android:padding="8dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/monday_header"
-                app:layout_constraintWidth_percent="0.14" />
+                <TextView
+                    android:id="@+id/monday_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#E0E0E0"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="M"
+                    app:layout_constraintStart_toEndOf="@id/sunday_header"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.14" />
 
-            <TextView
-                android:id="@+id/wednesday_header"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="W"
-                android:gravity="center"
-                android:background="#E0E0E0"
-                android:padding="8dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/tuesday_header"
-                app:layout_constraintWidth_percent="0.14" />
+                <TextView
+                    android:id="@+id/tuesday_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#E0E0E0"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="T"
+                    app:layout_constraintStart_toEndOf="@id/monday_header"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.14" />
 
-            <TextView
-                android:id="@+id/thursday_header"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Th"
-                android:gravity="center"
-                android:background="#E0E0E0"
-                android:padding="8dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/wednesday_header"
-                app:layout_constraintWidth_percent="0.14" />
+                <TextView
+                    android:id="@+id/wednesday_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#E0E0E0"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="W"
+                    app:layout_constraintStart_toEndOf="@id/tuesday_header"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.14" />
 
-            <!-- Time Rows -->
+                <TextView
+                    android:id="@+id/thursday_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#E0E0E0"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Th"
+                    app:layout_constraintStart_toEndOf="@id/wednesday_header"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.14" />
 
-            <TextView
-                android:id="@+id/time_8_00"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:background="#F5F5F5"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="08:00"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/time_header" />
-
-            <TextView
-                android:id="@+id/time_08_00"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:background="#F5F5F5"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="08:00-09:30"
-                app:layout_constraintBottom_toBottomOf="@+id/grid_08_00_saturday"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/time_header" />
-
-            <TextView
-                android:id="@+id/grid_08_00_saturday"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:padding="16dp"
-                app:layout_constraintStart_toEndOf="@id/time_08_00"
-                app:layout_constraintTop_toBottomOf="@id/saturday_header"
-                app:layout_constraintWidth_percent="0.14" />
-
-            <TextView
-                android:id="@+id/grid_8_00_tuesday"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:padding="16dp"
-                app:layout_constraintStart_toEndOf="@id/grid_08_00_sunday"
-                app:layout_constraintTop_toBottomOf="@id/sunday_header"
-                app:layout_constraintWidth_percent="0.14" />
+                <!-- Time Rows -->
 
 
-            <!-- Repeat for each day (Sunday through Friday) -->
-            <TextView
-                android:id="@+id/grid_08_00_sunday"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:padding="16dp"
-                app:layout_constraintStart_toEndOf="@id/grid_08_00_saturday"
-                app:layout_constraintTop_toBottomOf="@id/sunday_header"
-                app:layout_constraintWidth_percent="0.14" />
+                <TextView
+                    android:id="@+id/time_08_00"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:background="#F5F5F5"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="08:00-09:30"
+                    app:layout_constraintBottom_toBottomOf="@+id/grid_08_00_saturday"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/time_header" />
 
-            <TextView
-                android:id="@+id/grid_08_00_monday"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:padding="16dp"
-                app:layout_constraintStart_toEndOf="@id/grid_08_00_sunday"
-                app:layout_constraintTop_toBottomOf="@id/monday_header"
-                app:layout_constraintWidth_percent="0.14" />
+                <TextView
+                    android:id="@+id/grid_08_00_saturday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/time_08_00"
+                    app:layout_constraintTop_toBottomOf="@id/saturday_header"
+                    app:layout_constraintWidth_percent="0.14" />
 
-            <TextView
-                android:id="@+id/grid_08_00_tuesday"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:padding="16dp"
-                app:layout_constraintStart_toEndOf="@id/grid_08_00_monday"
-                app:layout_constraintTop_toBottomOf="@id/tuesday_header"
-                app:layout_constraintWidth_percent="0.14" />
-
-            <TextView
-                android:id="@+id/grid_08_00_wednesday"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:padding="16dp"
-                app:layout_constraintStart_toEndOf="@id/grid_08_00_tuesday"
-                app:layout_constraintTop_toBottomOf="@id/wednesday_header"
-                app:layout_constraintWidth_percent="0.14" />
-
-            <TextView
-                android:id="@+id/grid_08_00_thursday"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:padding="16dp"
-                app:layout_constraintStart_toEndOf="@id/grid_08_00_wednesday"
-                app:layout_constraintTop_toBottomOf="@id/thursday_header"
-                app:layout_constraintWidth_percent="0.14" />
-
-            <!-- Repeat for other time slots -->
-            <!-- Time Slot 2 -->
-            <TextView
-                android:id="@+id/time_09_30"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:background="#F5F5F5"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="09:30-11:00"
-                app:layout_constraintBottom_toBottomOf="@+id/grid_09_30_saturday"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/time_08_00" />
-
-            <TextView
-                android:id="@+id/grid_09_30_saturday"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:padding="16dp"
-                app:layout_constraintStart_toEndOf="@id/time_09_30"
-                app:layout_constraintTop_toBottomOf="@id/grid_08_00_saturday"
-                app:layout_constraintWidth_percent="0.14" />
-
-            <TextView
-                android:id="@+id/grid_09_30_sunday"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:padding="16dp"
-                app:layout_constraintStart_toEndOf="@id/grid_09_30_saturday"
-                app:layout_constraintTop_toBottomOf="@id/grid_08_00_sunday"
-                app:layout_constraintWidth_percent="0.14" />
-
-            <TextView
-                android:id="@+id/grid_09_30_monday"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                android:padding="16dp"
-                app:layout_constraintStart_toEndOf="@id/grid_09_30_sunday"
-                app:layout_constraintTop_toBottomOf="@id/grid_08_00_monday"
-                app:layout_constraintWidth_percent="0.14" />
-
-            <!-- Similarly repeat the cells for Monday, Tuesday, Wednesday, Thursday, Friday -->
-
-            <!-- Time Slot 3 -->
-            <TextView
-                android:id="@+id/time_11_00"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:text="11:00-12:30"
-                android:gravity="center"
-                android:background="#F5F5F5"
-                android:padding="8dp"
-                app:layout_constraintTop_toBottomOf="@id/time_09_30"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <!-- Add rows for all days for 11:00-12:30 -->
-
-            <!-- Time Slot 4 -->
-            <TextView
-                android:id="@+id/time_12_30"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:text="12:30-14:00"
-                android:gravity="center"
-                android:background="#F5F5F5"
-                android:padding="8dp"
-                app:layout_constraintTop_toBottomOf="@id/time_11_00"
-                app:layout_constraintStart_toStartOf="parent" />
+                <TextView
+                    android:id="@+id/grid_8_00_tuesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_08_00_sunday"
+                    app:layout_constraintTop_toBottomOf="@id/sunday_header"
+                    app:layout_constraintWidth_percent="0.14" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- Repeat for each day (Sunday through Friday) -->
+                <TextView
+                    android:id="@+id/grid_08_00_sunday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_08_00_saturday"
+                    app:layout_constraintTop_toBottomOf="@id/sunday_header"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_08_00_monday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_08_00_sunday"
+                    app:layout_constraintTop_toBottomOf="@id/monday_header"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_08_00_tuesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_08_00_monday"
+                    app:layout_constraintTop_toBottomOf="@id/tuesday_header"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_08_00_wednesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_08_00_tuesday"
+                    app:layout_constraintTop_toBottomOf="@id/wednesday_header"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_08_00_thursday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_08_00_wednesday"
+                    app:layout_constraintTop_toBottomOf="@id/thursday_header"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <!-- Repeat for other time slots -->
+                <!-- Time Slot 2 -->
+                <TextView
+                    android:id="@+id/time_09_30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:background="#F5F5F5"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="09:30-11:00"
+                    app:layout_constraintBottom_toBottomOf="@+id/grid_09_30_saturday"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/time_08_00" />
+
+                <TextView
+                    android:id="@+id/grid_09_30_saturday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/time_09_30"
+                    app:layout_constraintTop_toBottomOf="@id/grid_08_00_saturday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_09_30_sunday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_09_30_saturday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_08_00_sunday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_09_30_monday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_09_30_sunday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_08_00_monday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_09_30_tuesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_09_30_monday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_08_00_tuesday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_09_30_wednesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_09_30_tuesday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_08_00_wednesday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_09_30_thursday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_09_30_wednesday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_08_00_thursday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <!-- Time Slot 3 -->
+                <TextView
+                    android:id="@+id/time_11_00"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:background="#F5F5F5"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="11:00-12:30"
+                    app:layout_constraintBottom_toBottomOf="@+id/grid_11_00_saturday"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/time_09_30" />
+
+                <TextView
+                    android:id="@+id/grid_11_00_saturday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/time_11_00"
+                    app:layout_constraintTop_toBottomOf="@id/grid_09_30_saturday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_11_00_sunday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_11_00_saturday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_09_30_sunday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_11_00_monday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_11_00_sunday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_09_30_monday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_11_00_tuesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_11_00_monday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_09_30_tuesday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_11_00_wednesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_11_00_tuesday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_09_30_wednesday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_11_00_thursday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_11_00_wednesday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_09_30_thursday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <!-- Time Slot 4 -->
+                <TextView
+                    android:id="@+id/time_12_30"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:background="#F5F5F5"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="12:30-14:00"
+                    app:layout_constraintBottom_toBottomOf="@+id/grid_12_30_saturday"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/time_11_00" />
+
+                <TextView
+                    android:id="@+id/grid_12_30_saturday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/time_12_30"
+                    app:layout_constraintTop_toBottomOf="@id/grid_11_00_saturday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_12_30_sunday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_12_30_saturday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_11_00_sunday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_12_30_monday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_12_30_sunday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_11_00_monday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_12_30_tuesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_12_30_monday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_11_00_tuesday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_12_30_wednesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_12_30_tuesday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_11_00_wednesday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_12_30_thursday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_12_30_wednesday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_11_00_thursday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <!-- Time Slot 5 -->
+
+                <TextView
+                    android:id="@+id/time_14_00"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:background="#F5F5F5"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="14:00-15:30"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/time_12_30" />
+
+                <TextView
+                    android:id="@+id/grid_14_00_saturday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/time_14_00"
+                    app:layout_constraintTop_toBottomOf="@id/grid_12_30_saturday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_14_00_sunday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_14_00_saturday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_12_30_sunday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_14_00_monday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_14_00_sunday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_12_30_monday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_14_00_tuesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_14_00_monday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_12_30_tuesday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_14_00_wednesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_14_00_tuesday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_12_30_wednesday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+                <TextView
+                    android:id="@+id/grid_14_00_thursday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    app:layout_constraintStart_toEndOf="@id/grid_14_00_wednesday"
+                    app:layout_constraintTop_toBottomOf="@id/grid_12_30_thursday"
+                    app:layout_constraintWidth_percent="0.14" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </HorizontalScrollView>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
