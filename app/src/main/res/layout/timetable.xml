@@ -4,8 +4,24 @@
     android:id="@+id/timetable"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_profile"
     tools:context=".MainActivity">
+
+    <View
+        android:id="@+id/blue_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#007BA7"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent="0.10" />
+
+    <View
+        android:id="@+id/white_box"
+        android:background="#FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/blue_background"
+        app:layout_constraintHeight_percent="0.90"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/txtlogo"

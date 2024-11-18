@@ -5,9 +5,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/rounded_rec_main"
     tools:context=".MainActivity"
     android:id="@+id/main">
+
+    <View
+        android:id="@+id/blue_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#007BA7"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHeight_percent="0.35" />
+
+    <View
+        android:id="@+id/white_box"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.80"
+        android:background="@drawable/rounded_white_box"
+        app:layout_constraintTop_toBottomOf="@id/blue_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <ImageView
         android:id="@+id/logo_univ"

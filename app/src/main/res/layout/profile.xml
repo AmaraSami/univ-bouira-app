@@ -4,9 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_profile"
     tools:context=".MainActivity"
     android:id="@+id/profile">
+
+    <View
+        android:id="@+id/blue_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#007BA7"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent="0.10"
+        />
+
+    <!-- Rounded white box -->
+    <View
+        android:id="@+id/white_box"
+        android:background="#FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/blue_background"
+        app:layout_constraintHeight_percent="0.90"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageView
@@ -46,6 +64,7 @@
         android:layout_height="wrap_content"
         android:foreground="@drawable/profile_card_border"
         app:cardBackgroundColor="@android:color/white"
+        app:cardElevation="0dp"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="@+id/guideline2">
@@ -108,12 +127,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:foreground="@drawable/profile_card_border"
         app:cardBackgroundColor="@android:color/white"
+        android:foreground="@drawable/profile_card_border"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="@id/guideline3"
-        app:layout_constraintTop_toBottomOf="@id/profile_card">
+        app:layout_constraintTop_toBottomOf="@id/profile_card"
+        app:cardElevation="0dp">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
