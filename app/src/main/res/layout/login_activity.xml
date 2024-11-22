@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".LoginActivity"
     android:id="@+id/main">
 
     <View
@@ -69,6 +69,7 @@
         app:startIconDrawable="@drawable/id3">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_nce"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/inputtype"
@@ -96,6 +97,7 @@
         app:startIconDrawable="@drawable/lock">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_mdp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/inputtype"
