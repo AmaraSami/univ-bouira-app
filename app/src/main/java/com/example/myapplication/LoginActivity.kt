@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
         initializeViews()
 
         if (sharedPreferences.getBoolean("isLoggedIn", false)) {
-            navigateToProfile()
+            navigateToMain()
         }
 
         val username = "123456789"
@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
 
             if (enteredUsername == username && enteredPassword == password) {
                 sharedPreferences.edit().putBoolean("isLoggedIn", true).apply()
-                navigateToProfile()
+                navigateToMain()
             } else {
                 // Show error message
                 Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show()
@@ -69,8 +69,8 @@ class LoginActivity : AppCompatActivity() {
         passwordET = findViewById(R.id.input_mdp)
     }
 
-    private fun navigateToProfile() {
-        val intent = Intent(this, ProfileActivity::class.java)
+    private fun navigateToMain() {
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }

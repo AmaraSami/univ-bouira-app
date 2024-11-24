@@ -48,4 +48,5 @@ dependencies {
 
 
     implementation (libs.circleimageview)
+    implementation(libs.material.v110)
 }
