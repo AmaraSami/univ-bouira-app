@@ -2,4 +2,4 @@
 An application To help Students and Teachers of University of Bouira to access and post notes,timetable and courses easily
 
 #Authors
-Amara Sami Anis , Meziane Akram
+Amara Sami Anis , Meziane Akram.
