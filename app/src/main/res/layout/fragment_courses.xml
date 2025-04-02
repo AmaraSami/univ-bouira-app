@@ -30,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="120dp"
+            android:paddingBottom="120dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,8 +49,12 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/courses_scrollview"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/cc"
-                    tools:ignore="NotSibling" />"/>
+                    android:src="@drawable/comp"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:padding="6dp"
+                    android:background="@drawable/background_courses"
+                     />
                 <ImageButton
                     android:id="@+id/imageButton2"
                     android:layout_width="394dp"
@@ -58,7 +63,12 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/imageButton1"
                     android:layout_marginTop="20dp"
-                    tools:src="@tools:sample/backgrounds/scenic" />
+                    android:src="@drawable/se2"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:padding="6dp"
+                    android:background="@drawable/background_courses"
+                    />
                 <ImageButton
                     android:id="@+id/imageButton3"
                     android:layout_width="394dp"
@@ -67,7 +77,11 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/imageButton2"
                     android:layout_marginTop="20dp"
-                    tools:src="@tools:sample/backgrounds/scenic" />
+                    android:src="@drawable/ihm"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:padding="6dp"
+                    android:background="@drawable/background_courses"/>
                 <ImageButton
                     android:id="@+id/imageButton4"
                     android:layout_width="394dp"
@@ -76,7 +90,11 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/imageButton3"
                     android:layout_marginTop="20dp"
-                    tools:src="@tools:sample/backgrounds/scenic" />
+                    android:src="@drawable/gl"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:padding="6dp"
+                    android:background="@drawable/background_courses"/>
                 <ImageButton
                     android:id="@+id/imageButton5"
                     android:layout_width="394dp"
@@ -85,7 +103,12 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/imageButton4"
                     android:layout_marginTop="20dp"
-                    tools:src="@tools:sample/backgrounds/scenic" />
+                    android:src="@drawable/pl"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:padding="6dp"
+                    android:background="@drawable/background_courses"
+                    />
                 <ImageButton
                     android:id="@+id/imageButton6"
                     android:layout_width="394dp"
@@ -94,7 +117,12 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/imageButton5"
                     android:layout_marginTop="20dp"
-                    tools:src="@tools:sample/backgrounds/scenic" />
+                    android:src="@drawable/economie"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:padding="6dp"
+                    android:background="@drawable/background_courses"
+                    />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
