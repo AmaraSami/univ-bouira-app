@@ -1,14 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.NotesFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/profile"
+        tools:context=".MainActivity">
+
+        <ImageView
+            android:id="@+id/txtlogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="155dp"
+            android:contentDescription="@string/university_logo"
+            android:src="@drawable/univ_txt_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/semester_buttons_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#007BA7"
+            android:text="Semestre 4"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtlogo"
+            app:layout_constraintVertical_bias="0.046" />
+
+        <ScrollView
+            android:id="@+id/modulesscrollview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/semester_buttons_layout"
+            tools:ignore="ExtraText">>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/imageButton9"
+                    android:layout_width="182dp"
+                    android:layout_height="107dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.677"
+                    app:layout_constraintStart_toEndOf="@+id/imageButton8"
+                    app:layout_constraintTop_toBottomOf="@+id/imageButton7"
+                    android:background="@drawable/design_background_notes"
+                    android:contentDescription="pic4"
+                    android:scaleType="fitCenter"
+                    android:padding="8dp" />
+
+                <ImageButton
+                    android:id="@+id/imageButton8"
+                    android:layout_width="182dp"
+                    android:layout_height="107dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="32dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageButton6"
+                    android:background="@drawable/design_background_notes"
+                    android:contentDescription="pic3"
+                    android:scaleType="fitCenter"
+                    android:padding="8dp"/>
+
+                <ImageButton
+                    android:id="@+id/imageButton7"
+                    android:layout_width="182dp"
+                    android:layout_height="107dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.483"
+                    app:layout_constraintStart_toEndOf="@+id/imageButton6"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:background="@drawable/design_background_notes"
+                    android:contentDescription="pic3"
+                    android:scaleType="fitCenter"
+                    android:padding="8dp"/>
+
+                <ImageButton
+                    android:id="@+id/imageButton6"
+                    android:layout_width="182dp"
+                    android:layout_height="107dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="32dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageButton7"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    android:contentDescription="pic1"
+                    android:background="@drawable/design_background_notes"
+                    android:scaleType="fitCenter"
+                    android:padding="8dp"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </FrameLayout>

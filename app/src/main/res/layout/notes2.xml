@@ -122,9 +122,7 @@
         <EditText
             android:id="@+id/editText3"
             android:layout_width="wrap_content"
-            android:layout_width="99dp"
             android:layout_height="wrap_content"
-            android:layout_height="25dp"
             android:background="@drawable/background_edittext_notes"
             android:layout_marginTop="28dp"
             app:layout_constraintEnd_toEndOf="parent"
