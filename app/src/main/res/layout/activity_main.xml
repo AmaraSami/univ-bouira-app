@@ -28,6 +28,7 @@
         app:itemIconTint="#fff"
         android:fitsSystemWindows="true"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:itemIconSize="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

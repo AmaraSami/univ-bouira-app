@@ -37,6 +37,21 @@ class LoginActivity : AppCompatActivity() {
 
         initializeViews()
 
+        numero_carte_etudiant_ET.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                log1.hint = null  // Hide hint when focused
+            } else {
+                log1.hint = "numero de carte d’etudiant"  // Restore hint when focus is lost
+            }
+        }
+        passwordET.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                log2.hint = null  // Hide hint when focused
+            } else {
+                log2.hint = "mot de passe d’etudiant"  // Restore hint when focus is lost
+            }
+        }
+
         if (sharedPreferences.getBoolean("isLoggedIn", false)) {
             navigateToMain()
         }
