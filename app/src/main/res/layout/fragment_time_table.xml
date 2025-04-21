@@ -25,43 +25,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-<<<<<<< HEAD
-        <!-- Semester Buttons -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/semester_buttons_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtlogo">
 
-            <Button
-                android:id="@+id/semester_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="#007BA7"
-                android:text="Semester"
-                android:textColor="#FFFFFF"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/semestre4_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#007BA7"
-                android:text="Semestre 4"
-                android:textColor="#FFFFFF"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/semester_button"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- Timetable Section -->
-=======
         <Button
             android:id="@+id/semester_button1_layout"
             android:layout_width="wrap_content"
@@ -87,7 +51,6 @@
             app:layout_constraintStart_toStartOf="@+id/guideline13"
             app:layout_constraintTop_toBottomOf="@+id/txtlogo" />
 
->>>>>>> e0b3899 (Added recycler view in Notes Menu and changed ui of Notes Preview)
         <ScrollView
             android:id="@+id/timetable_scrollview"
             android:layout_width="0dp"
@@ -96,12 +59,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-<<<<<<< HEAD
-            app:layout_constraintTop_toBottomOf="@id/semester_buttons_layout">
-=======
-            app:layout_constraintTop_toBottomOf="@id/guideline14">
->>>>>>> e0b3899 (Added recycler view in Notes Menu and changed ui of Notes Preview)
 
+            app:layout_constraintTop_toBottomOf="@id/guideline14">
             <HorizontalScrollView
                 android:id="@+id/horizontal_scrollview"
                 android:layout_width="wrap_content"
@@ -579,8 +538,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </HorizontalScrollView>
         </ScrollView>
-<<<<<<< HEAD
-=======
+
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline11"
@@ -611,7 +569,6 @@
             app:layout_constraintGuide_percent="0.20" />
 
 
->>>>>>> e0b3899 (Added recycler view in Notes Menu and changed ui of Notes Preview)
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

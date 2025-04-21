@@ -39,28 +39,18 @@ class LoginActivity : AppCompatActivity() {
 
         numero_carte_etudiant_ET.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-<<<<<<< HEAD
-                log1.hint = null  // Hide hint when focused
-            } else {
-                log1.hint = "numero de carte d’etudiant"  // Restore hint when focus is lost
-=======
+
                 log1.hint = null
             } else {
                 log1.hint = "numero de carte d’etudiant"
->>>>>>> e0b3899 (Added recycler view in Notes Menu and changed ui of Notes Preview)
             }
         }
         passwordET.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-<<<<<<< HEAD
-                log2.hint = null  // Hide hint when focused
-            } else {
-                log2.hint = "mot de passe d’etudiant"  // Restore hint when focus is lost
-=======
+
                 log2.hint = null
             } else {
                 log2.hint = "mot de passe d’etudiant"
->>>>>>> e0b3899 (Added recycler view in Notes Menu and changed ui of Notes Preview)
             }
         }
 

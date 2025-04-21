@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@android:color/transparent" /> <!-- Transparent fill -->
     <stroke
@@ -6,13 +6,6 @@
         android:color="#0176A0"
         />
     <corners android:radius="20dp" /> <!-- Corner radius -->
-=======
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@android:color/transparent" /> <!-- Transparent fill -->
-    <stroke
-        android:width="2dp"
-        android:color="#0176A0"
-        />
-    <corners android:radius="20dp" /> <!-- Corner radius -->
->>>>>>> e0b3899 (Added recycler view in Notes Menu and changed ui of Notes Preview)
+
+
 </shape>
