@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".fragments.NotesFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,99 +25,84 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/semester_buttons_layout"
+            android:id="@+id/semester_button1_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#007BA7"
-            android:text="Semestre 4"
+            android:text="Semestre 5"
             android:textColor="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtlogo"
-            app:layout_constraintVertical_bias="0.046" />
+            app:layout_constraintBottom_toTopOf="@+id/guideline10"
+            app:layout_constraintEnd_toStartOf="@+id/guideline9"
+            app:layout_constraintStart_toStartOf="@+id/guideline7"
+            app:layout_constraintTop_toBottomOf="@+id/txtlogo" />
 
-        <ScrollView
-            android:id="@+id/modulesscrollview"
+
+        <Button
+            android:id="@+id/semester_button2_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#007BA7"
+            android:text="Semestre 6"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toTopOf="@+id/guideline10"
+            app:layout_constraintEnd_toStartOf="@+id/guideline8"
+            app:layout_constraintHorizontal_bias="0.558"
+            app:layout_constraintStart_toStartOf="@+id/guideline9"
+            app:layout_constraintTop_toBottomOf="@+id/txtlogo" />
+
+        <FrameLayout
+            android:id="@+id/recycler_container"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/guideline10"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/semester_buttons_layout"
-            tools:ignore="ExtraText">>
+            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="10dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent" />
 
-                <ImageButton
-                    android:id="@+id/imageButton9"
-                    android:layout_width="182dp"
-                    android:layout_height="107dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginEnd="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.677"
-                    app:layout_constraintStart_toEndOf="@+id/imageButton8"
-                    app:layout_constraintTop_toBottomOf="@+id/imageButton7"
-                    android:background="@drawable/design_background_notes"
-                    android:contentDescription="pic4"
-                    android:src="@drawable/comp"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"
-                    android:padding="8dp" />
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:visibility="gone" />
 
-                <ImageButton
-                    android:id="@+id/imageButton8"
-                    android:layout_width="182dp"
-                    android:layout_height="107dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="32dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageButton6"
-                    android:background="@drawable/design_background_notes"
-                    android:contentDescription="pic3"
-                    android:src="@drawable/ihm"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"
-                    android:padding="8dp"/>
+        </FrameLayout>
 
-                <ImageButton
-                    android:id="@+id/imageButton7"
-                    android:layout_width="182dp"
-                    android:layout_height="107dp"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.483"
-                    app:layout_constraintStart_toEndOf="@+id/imageButton6"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:background="@drawable/design_background_notes"
-                    android:contentDescription="pic3"
-                    android:src="@drawable/gl"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"
-                    android:padding="8dp"/>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
 
-                <ImageButton
-                    android:id="@+id/imageButton6"
-                    android:layout_width="182dp"
-                    android:layout_height="107dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="32dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageButton7"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0"
-                    android:contentDescription="pic1"
-                    android:background="@drawable/design_background_notes"
-                    android:src="@drawable/pl"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"
-                    android:padding="8dp"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.20" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -25,6 +25,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
+<<<<<<< HEAD
         <!-- Semester Buttons -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/semester_buttons_layout"
@@ -60,6 +61,33 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Timetable Section -->
+=======
+        <Button
+            android:id="@+id/semester_button1_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#007BA7"
+            android:text="Semestre 5"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toTopOf="@+id/guideline14"
+            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintStart_toStartOf="@+id/guideline11"
+            app:layout_constraintTop_toBottomOf="@+id/txtlogo" />
+
+
+        <Button
+            android:id="@+id/semester_button2_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#007BA7"
+            android:text="Semestre 6"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toTopOf="@+id/guideline14"
+            app:layout_constraintEnd_toStartOf="@+id/guideline12"
+            app:layout_constraintStart_toStartOf="@+id/guideline13"
+            app:layout_constraintTop_toBottomOf="@+id/txtlogo" />
+
+>>>>>>> e0b3899 (Added recycler view in Notes Menu and changed ui of Notes Preview)
         <ScrollView
             android:id="@+id/timetable_scrollview"
             android:layout_width="0dp"
@@ -68,7 +96,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+<<<<<<< HEAD
             app:layout_constraintTop_toBottomOf="@id/semester_buttons_layout">
+=======
+            app:layout_constraintTop_toBottomOf="@id/guideline14">
+>>>>>>> e0b3899 (Added recycler view in Notes Menu and changed ui of Notes Preview)
 
             <HorizontalScrollView
                 android:id="@+id/horizontal_scrollview"
@@ -547,6 +579,39 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </HorizontalScrollView>
         </ScrollView>
+<<<<<<< HEAD
+=======
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.20" />
+
+
+>>>>>>> e0b3899 (Added recycler view in Notes Menu and changed ui of Notes Preview)
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
