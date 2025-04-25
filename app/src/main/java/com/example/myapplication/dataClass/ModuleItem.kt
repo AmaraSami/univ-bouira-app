@@ -5,4 +5,3 @@ data class ModuleItem(
     val subtitle: String,
     val note: String
 )
-

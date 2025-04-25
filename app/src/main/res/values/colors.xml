@@ -3,4 +3,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#007BA7</color>
+    <color name="lecture_bg">#E3F2FD</color> <!-- Light blue -->
+    <color name="lab_bg">#E8F5E9</color> <!-- Light green -->
+    <color name="tutorial_bg">#FFF3E0</color> <!-- Light orange -->
+    <color name="highlight_day">#FFE082</color> <!-- Soft yellow -->
+    <color name="default_bg">#FFFFFF</color>
+    <color name="empty_slot_bg">#F5F5F5</color>
+    <color name="current_day_bg">#FFF9C4</color> <!-- Light yellow highlight -->
+    <color name="grid_line_color">#E0E0E0</color>
 </resources>

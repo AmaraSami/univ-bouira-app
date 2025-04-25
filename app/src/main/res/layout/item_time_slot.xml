@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="80dp"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:background="#CCE5FF"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/subject_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Math"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/room_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Room A101"
+        android:textSize="12sp"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/teacher_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dr. Smith"
+        android:textSize="12sp"
+        android:textColor="@android:color/black"/>
+</LinearLayout>

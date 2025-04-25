@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TimeCellStyle">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">100dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/cell_border</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">15sp</item>
+
+    </style>
+    <style name="TimeColumnStyle">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">100dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:background">@drawable/cell_border</item>
+        <item name="android:textColor">#555555</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+</resources>
