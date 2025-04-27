@@ -5,10 +5,14 @@
     <color name="blue">#007BA7</color>
     <color name="lecture_bg">#E3F2FD</color> <!-- Light blue -->
     <color name="lab_bg">#E8F5E9</color> <!-- Light green -->
-    <color name="tutorial_bg">#FFF3E0</color> <!-- Light orange -->
     <color name="highlight_day">#FFE082</color> <!-- Soft yellow -->
+    <color name="tutorial_bg">#FFF3E0</color> <!-- Light orange -->
     <color name="default_bg">#FFFFFF</color>
     <color name="empty_slot_bg">#F5F5F5</color>
     <color name="current_day_bg">#FFF9C4</color> <!-- Light yellow highlight -->
     <color name="grid_line_color">#E0E0E0</color>
+    <color name="todayHighlight">#2E7D32</color> <!-- Very light Yellow -->
+    <color name="activeButtonColor">#E2E0E0</color> <!-- White (Active) -->
+    <color name="inactiveButtonColor">#007BA7</color> <!-- Blue (Inactive) -->
+
 </resources>

@@ -26,11 +26,11 @@
 
         <!-- Semester 5 Button -->
         <Button
-            android:id="@+id/semester5_button"
+            android:id="@+id/semester1Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#007BA7"
-            android:text="Semestre 5"
+            android:text="Semestre 1"
             android:textColor="#FFFFFF"
             app:layout_constraintBottom_toTopOf="@+id/guideline14"
             app:layout_constraintEnd_toStartOf="@+id/guideline13"
@@ -39,11 +39,11 @@
 
         <!-- Semester 6 Button -->
         <Button
-            android:id="@+id/semester6_button"
+            android:id="@+id/semester2Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#007BA7"
-            android:text="Semestre 6"
+            android:text="Semestre 2"
             android:textColor="#FFFFFF"
             app:layout_constraintBottom_toTopOf="@+id/guideline14"
             app:layout_constraintEnd_toStartOf="@+id/guideline12"
