@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "248513118144",
+    "project_id": "univ-bouira-c00f5",
+    "storage_bucket": "univ-bouira-c00f5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:248513118144:android:11b41a75fa37a3fc335225",
+        "android_client_info": {
+          "package_name": "com.example.univbouira"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1nLPHcYjjkuJ9Ut4VzdJM6RBUgZlrjSU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

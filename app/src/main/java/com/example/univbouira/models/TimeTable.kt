@@ -1,4 +1,4 @@
-package com.example.myapplication.dataClass
+package com.example.univbouira.models
 
 data class Timetable(
     val semester5: Map<String, TimeSlot> = emptyMap(),

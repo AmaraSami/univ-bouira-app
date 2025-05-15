@@ -1,4 +1,4 @@
-package com.example.myapplication.fragments
+package com.example.univbouira.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.ModuleItem
-import com.example.myapplication.R
-import com.example.myapplication.adapters.NotesAdapter
+import com.example.univbouira.ModuleItem
+import com.example.univbouira.R
+import com.example.univbouira.adapters.NotesAdapter
 
 
 class NotesFragment : Fragment() {

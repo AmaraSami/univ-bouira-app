@@ -1,12 +1,12 @@
-package com.example.myapplication.adapters
+package com.example.univbouira.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.ModuleItem
-import com.example.myapplication.R
+import com.example.univbouira.ModuleItem
+import com.example.univbouira.R
 
 class NotesAdapter(private val itemList: List<ModuleItem>) : RecyclerView.Adapter<NotesAdapter.ModuleViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModuleViewHolder {

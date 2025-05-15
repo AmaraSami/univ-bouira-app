@@ -1,4 +1,4 @@
-package com.example.myapplication.dataClass
+package com.example.univbouira.models
 
 data class Course(
     val name: String = "",

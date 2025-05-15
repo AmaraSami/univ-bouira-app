@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.univbouira
 
 data class ModuleItem(
     val title: String,

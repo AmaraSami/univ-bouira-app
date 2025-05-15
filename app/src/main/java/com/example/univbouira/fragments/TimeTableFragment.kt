@@ -1,4 +1,4 @@
-package com.example.myapplication.fragments
+package com.example.univbouira.fragments
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
@@ -7,15 +7,14 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.example.myapplication.R
-import com.example.myapplication.dataClass.TimeSlot
+import com.example.univbouira.R
+import com.example.univbouira.models.TimeSlot
 import java.util.Calendar
 
 class TimeTableFragment : Fragment(R.layout.fragment_time_table) {

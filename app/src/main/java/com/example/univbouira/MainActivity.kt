@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.univbouira
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -7,7 +7,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
-import com.example.myapplication.fragments.*
+import com.example.univbouira.fragments.*
+import com.example.univbouira.fragments.CoursesFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
