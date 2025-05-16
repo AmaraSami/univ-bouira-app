@@ -62,9 +62,6 @@ dependencies {
     implementation ("com.google.firebase:firebase-auth:22.3.0")
 
 
-    implementation ("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
-
-
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     kapt("com.github.bumptech.glide:compiler:4.16.0")
 
