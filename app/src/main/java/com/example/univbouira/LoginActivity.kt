@@ -1,95 +1,94 @@
 package com.example.univbouira
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import com.example.univbouira.databinding.LoginActivityBinding
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import org.json.JSONObject
+import java.util.concurrent.Executors
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var sharedPreferences: SharedPreferences
-
-    lateinit var loginbtn: Button
-    lateinit var log1: TextInputLayout
-    lateinit var log2: TextInputLayout
-    lateinit var numero_carte_etudiant_ET: TextInputEditText
-    lateinit var passwordET: TextInputEditText
-
-
+    private lateinit var binding: LoginActivityBinding
+    private val client = OkHttpClient()
+    private val executor = Executors.newSingleThreadExecutor()
+    private val API_BASE = "https://progres.mesrs.dz"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.login_activity)
-        sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        binding = LoginActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        initializeViews()
+        binding.loginbtn.setOnClickListener {
+            val studentNumber = binding.inputNce.text.toString().trim()
+            val password = binding.inputMdp.text.toString().trim()
 
-        numero_carte_etudiant_ET.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-
-                log1.hint = null
-            } else {
-                log1.hint = "numero de carte d’etudiant"
+            if (studentNumber.length != 12 || password.length != 8) {
+                Toast.makeText(this, "Vérifiez vos identifiants", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            loginWithApi(studentNumber, password)
         }
-        passwordET.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-
-                log2.hint = null
-            } else {
-                log2.hint = "mot de passe d’etudiant"
-            }
-        }
-
-        if (sharedPreferences.getBoolean("isLoggedIn", false)) {
-            navigateToMain()
-        }
-
-        val username = "123456789"
-        val password = "123456789"
-
-        loginbtn.setOnClickListener {
-            val enteredUsername = numero_carte_etudiant_ET.text.toString()
-            val enteredPassword = passwordET.text.toString()
-
-            if (enteredUsername == username && enteredPassword == password) {
-                sharedPreferences.edit().putBoolean("isLoggedIn", true).apply()
-                navigateToMain()
-            } else {
-                // Show error message
-                Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
     }
 
+    private fun loginWithApi(username: String, password: String) {
+        executor.execute {
+            try {
+                val JSON = "application/json; charset=utf-8".toMediaType()
+                val json = JSONObject().apply {
+                    put("username", username)
+                    put("password", password)
+                }
 
-    private fun initializeViews() {
-        loginbtn = findViewById(R.id.loginbtn)
-        log1 = findViewById(R.id.log1)
-        log2 = findViewById(R.id.log2)
-        numero_carte_etudiant_ET = findViewById(R.id.input_nce)
-        passwordET = findViewById(R.id.input_mdp)
+                val body = RequestBody.create(JSON, json.toString())
+                val request = Request.Builder()
+                    .url("$API_BASE/api/authentication/v1/")
+                    .post(body)
+                    .build()
+
+                val response = client.newCall(request).execute()
+
+                if (!response.isSuccessful) {
+                    runOnUiThread {
+                        Toast.makeText(this, "Login échoué. Vérifiez vos données", Toast.LENGTH_SHORT).show()
+                    }
+                    return@execute
+                }
+
+                val responseBody = response.body?.string()
+                val loginData = JSONObject(responseBody ?: "")
+
+                val token = loginData.optString("token", null)
+                val uuid = loginData.optString("uuid", null)
+
+                if (token == null || uuid == null) {
+                    runOnUiThread {
+                        Toast.makeText(this, "Échec de l'authentification", Toast.LENGTH_SHORT).show()
+                    }
+                    return@execute
+                }
+
+                runOnUiThread {
+                    Toast.makeText(this, "Bienvenue 👋", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                runOnUiThread {
+                    Toast.makeText(this, "Erreur réseau ou serveur", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
-    private fun navigateToMain() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+    override fun onDestroy() {
+        super.onDestroy()
+        executor.shutdownNow()
     }
-
 }
