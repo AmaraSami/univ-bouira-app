@@ -19,6 +19,15 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
+        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+        if (isLoggedIn) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
+
         binding = LoginActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -73,6 +82,11 @@ class LoginActivity : AppCompatActivity() {
                 }
 
                 runOnUiThread {
+                    val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
+                    val editor = sharedPref.edit()
+                    editor.putBoolean("isLoggedIn", true)
+                    editor.apply()
+
                     Toast.makeText(this, "Bienvenue 👋", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
