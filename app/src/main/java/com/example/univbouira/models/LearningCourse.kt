@@ -4,5 +4,7 @@ data class LearningCourse(
     val name: String = "",
     val room: String = "",
     val professor: String = "",
-    val type: String = "" // lecture, TD, TP, etc.
+    val level: String? = null,
+    val type: String = "" ,// lecture, TD, TP, etc.
+    val semester: Int = 1
 )
