@@ -45,9 +45,7 @@ The University of Bouira Mobile Application is a comprehensive platform designed
 - **Push Notifications**: Firebase Cloud Messaging
 - **Analytics**: Firebase Analytics
 
-## Installation
-
-### Prerequisites
+## Prerequisites
 - Android 6.0 (Marshmallow) or higher
 - Active internet connection
 - University of Bouira email address for authentication
