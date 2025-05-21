@@ -45,8 +45,6 @@ The University of Bouira Mobile Application is a comprehensive platform designed
 - **Resource Sharing**: Upload course materials and resources
 
 ### For Administration
-- **Announcement Distribution**: Broadcast important messages to the university community
-- **Event Management**: Create and promote university events
 - **Academic Calendar**: Manage and update the academic calendar
 - **Data Analytics**: Access statistics about student performance and attendance
 
@@ -55,11 +53,8 @@ The University of Bouira Mobile Application is a comprehensive platform designed
 (TODO : Add app Screenshots)
 
 ## Technology Stack
-
 - **Frontend**: Native Android (Kotlin/Java)
-- **Database**: PostgreSQL
-- **Push Notifications**: Firebase Cloud Messaging
-- **Analytics**: Firebase Analytics
+- **Database**: Firebase
 
 ## Prerequisites
 - Android 6.0 (Marshmallow) or higher
