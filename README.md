@@ -57,13 +57,13 @@ The University of Bouira Mobile Application is a comprehensive platform designed
 
 
 ### Student Access
-1. Log in with your student credentials
+1. Log in with your student credentials (university email, registration number)
 2. Access your personalized dashboard
 3. View your schedule, and course materials
 
 
 ### Professor Access
-1. Log in with your faculty credentials (university email, registration number)
+1. Log in with your faculty credentials
 2. Manage your courses from the dashboard
 3. Update grades, attendance, and course materials
 
