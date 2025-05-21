@@ -29,19 +29,13 @@ The University of Bouira Mobile Application is a comprehensive platform designed
 ## Features
 
 ### For Students
-- **Course Registration**: Register for courses each semester with real-time availability updates
 - **Class Schedules**: Access personalized class timetables with location information
 - **Grade Tracker**: View grades and academic progress
-- **Announcements**: Receive important notifications from administration and professors
-- **Campus Map**: Navigate the university campus with interactive maps
 - **Document Access**: Download lecture materials, syllabi, and academic resources
 
 ### For Professors
-- **Course Management**: Create and manage course content and materials
-- **Attendance Tracking**: Record and monitor student attendance
+- **Course Management**: manage course content and materials
 - **Grade Management**: Input and update student grades
-- **Communication Tools**: Send announcements and messages to students
-- **Office Hours**: Schedule and manage office hours and appointments
 - **Resource Sharing**: Upload course materials and resources
 
 ### For Administration
@@ -57,22 +51,21 @@ The University of Bouira Mobile Application is a comprehensive platform designed
 - **Database**: Firebase
 
 ## Prerequisites
-- Android 6.0 (Marshmallow) or higher
+- API 23 or higher
 - Active internet connection
-- University of Bouira email address for authentication
+- University of Bouira email address
 
 
 ### Student Access
 1. Log in with your student credentials
 2. Access your personalized dashboard
-3. View your schedule, announcements, and course materials
-4. Register for courses during the registration period
+3. View your schedule, and course materials
+
 
 ### Professor Access
 1. Log in with your faculty credentials
 2. Manage your courses from the dashboard
 3. Update grades, attendance, and course materials
-4. Communicate with your students through announcements
 
 ## Development
 
@@ -102,7 +95,7 @@ univ-bouira-app/
 └── README.md                   # Project documentation
 ```
 
-### Contributors and there Contacts:
+### Contributors and their Contacts:
 - Amara Sami Anis - samianis.amara@univ-bouira.dz
 - Meziane Akram   - akram.meziane@univ-bouira.dz
 - Rezouali Raouf  - raouf.rezouali@univ-bouira.dz
