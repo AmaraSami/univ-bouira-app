@@ -6,9 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.univbouira.databinding.ItemCourseMaterialBinding
 import com.example.univbouira.models.UploadedFile
 
-class CourseMaterialAdapter(
+class ManageCoursesAdapter(
     private val onDeleteClick: (UploadedFile) -> Unit
-) : RecyclerView.Adapter<CourseMaterialAdapter.CourseMaterialViewHolder>() {
+) : RecyclerView.Adapter<ManageCoursesAdapter.CourseMaterialViewHolder>() {
 
     private var uploadedFiles: MutableList<UploadedFile> = mutableListOf()
 
@@ -22,7 +22,8 @@ class CourseMaterialAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(file: UploadedFile) {
-            binding.textFileName.text = file.fileName
+            binding.textFileName.text = file.name
+            binding.textModuleTitle.text = "Module: ${file.moduleTitle}"
 
             binding.buttonDelete.setOnClickListener {
                 onDeleteClick(file)

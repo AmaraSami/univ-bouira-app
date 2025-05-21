@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.univbouira.R
 import com.example.univbouira.adapters.ModuleAdapter
 import com.example.univbouira.databinding.FragmentModulesBinding
-import com.example.univbouira.models.LearningCourse
+import com.example.univbouira.models.ModuleItem
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ModulesFragment : Fragment() {
@@ -68,8 +69,18 @@ class ModulesFragment : Fragment() {
 
     private fun setupRecyclerView() {
         moduleAdapter = ModuleAdapter { module ->
-            Toast.makeText(requireContext(), "Clicked: ${module.name}", Toast.LENGTH_SHORT).show()
-            // You can start an activity or show bottom sheet here
+            // Replace Fragment with ManageCoursesFragment and pass arguments
+            val fragment = ManageCoursesFragment().apply {
+                arguments = Bundle().apply {
+                    putString("moduleCode", module.code)
+                    putString("moduleTitle", module.title)
+                }
+            }
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.homeFragmentRoot, fragment)  // <-- Make sure your Activity layout has this container
+                .addToBackStack(null)
+                .commit()
         }
 
         binding.recyclerViewModules.apply {
@@ -80,11 +91,11 @@ class ModulesFragment : Fragment() {
 
     private fun loadModules() {
         showModuleLoading(true)
-        db.collection("courses")
+        db.collection("modules")
             .whereEqualTo("semester", selectedSemester)
             .get()
             .addOnSuccessListener { result ->
-                val modules = result.map { it.toObject(LearningCourse::class.java) }
+                val modules = result.map { it.toObject(ModuleItem::class.java) }
                 showModuleLoading(false)
                 if (modules.isEmpty()) {
                     binding.recyclerViewModules.visibility = View.GONE

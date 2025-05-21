@@ -1,9 +1,10 @@
 package com.example.univbouira.models
 
 data class UploadedFile(
-    val id: String = "",
-    val fileName: String = "",
-    val fileUrl: String = "",
-    val moduleName: String = "",
-    val uploadTimestamp: Long = 0L
+    var id: String? = null,           // Firestore document ID
+    val name: String = "",
+    val url: String = "",
+    val timestamp: Long = 0L,
+    val moduleCode: String = "",
+    val moduleTitle: String = ""
 )

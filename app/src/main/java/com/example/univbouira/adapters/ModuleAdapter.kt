@@ -4,15 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.univbouira.databinding.ItemModuleBinding
-import com.example.univbouira.models.LearningCourse
+import com.example.univbouira.models.ModuleItem
 
 class ModuleAdapter(
-    private val onItemClick: (LearningCourse) -> Unit
+    private val onItemClick: (ModuleItem) -> Unit
 ) : RecyclerView.Adapter<ModuleAdapter.ModuleViewHolder>() {
 
-    private var moduleList: List<LearningCourse> = emptyList()
+    private var moduleList: List<ModuleItem> = emptyList()
 
-    fun updateModules(newModuleList: List<LearningCourse>) {
+    fun updateModules(newModuleList: List<ModuleItem>) {
         moduleList = newModuleList
         notifyDataSetChanged()
     }
@@ -20,9 +20,9 @@ class ModuleAdapter(
     inner class ModuleViewHolder(private val binding: ItemModuleBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(module: LearningCourse) {
-            binding.textModuleName.text = module.name
-            binding.textModuleLevel.text = module.level ?: "Niveau inconnu"
+        fun bind(module: ModuleItem) {
+            binding.textModuleName.text = module.title
+            binding.textModuleLevel.text = module.subtitle.ifEmpty { "Niveau inconnu" }
 
             binding.root.setOnClickListener {
                 onItemClick(module)
