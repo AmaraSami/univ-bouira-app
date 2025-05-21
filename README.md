@@ -1,7 +1,7 @@
 # University of Bouira Mobile Application
 
 <p align="center">
-  <img src="/api/placeholder/200/200" alt="University of Bouira App Logo" />
+  <img src="screenshots/univ-app-baner.png" alt="University of Bouira App Logo" />
 </p>
 
 ## Overview
