@@ -1,7 +1,8 @@
-package com.example.univbouira
+package com.example.univbouira.models
 
 data class ModuleItem(
-    val title: String,
-    val subtitle: String,
-    val note: String
+    val code: String = "",
+    val title: String = "",
+    val subtitle: String = "",
+    val note: String = "N/A"  // default is N/A
 )

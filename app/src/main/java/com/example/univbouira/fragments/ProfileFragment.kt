@@ -1,62 +1,100 @@
 package com.example.univbouira.fragments
 
+import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.univbouira.LoginActivity
 import com.example.univbouira.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import de.hdodenhof.circleimageview.CircleImageView
 
 class ProfileFragment : Fragment() {
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var logoutBtn: Button
+    private lateinit var nameText: TextView
+    private lateinit var levelText: TextView
+    private lateinit var specialtyText: TextView
+    private lateinit var studentNumberText: TextView
+    private lateinit var birthDateText: TextView
+    private lateinit var birthPlaceText: TextView
+    private lateinit var profileImage: CircleImageView
+    private lateinit var logoutButton: Button
+
+    private val firestore = FirebaseFirestore.getInstance()
+    private val firebaseAuth = FirebaseAuth.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_profile, container, false)
-    }
+        val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        nameText = view.findViewById(R.id.Sname)
+        levelText = view.findViewById(R.id.Slevel)
+        specialtyText = view.findViewById(R.id.specialty_id)
+        studentNumberText = view.findViewById(R.id.editStudentNumber)
+        birthDateText = view.findViewById(R.id.editBirthDate)
+        birthPlaceText = view.findViewById(R.id.editBirthPlace)
+        profileImage = view.findViewById(R.id.profile_image)
+        logoutButton = view.findViewById(R.id.logoutbtn)
 
-        enableEdgeToEdge(view)
+        val userEmail = firebaseAuth.currentUser?.email
 
-        sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", android.content.Context.MODE_PRIVATE)
-
-        logoutBtn = view.findViewById(R.id.logoutbtn)
-
-        logoutBtn.setOnClickListener {
-            val editor = sharedPreferences.edit()
-            editor.putBoolean("isLoggedIn", false)
-            editor.apply()
-
-            Toast.makeText(requireContext(), "Logging out...", Toast.LENGTH_SHORT).show()
-
-            navigateToLogin()
+        if (userEmail != null) {
+            fetchProfileData(userEmail)
+        } else {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
-    }
 
-    private fun navigateToLogin() {
-        val intent = Intent(requireContext(), LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-    }
-
-    private fun enableEdgeToEdge(view: View) {
-        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        logoutButton.setOnClickListener {
+            val sharedPreferences = requireContext().getSharedPreferences("StudentPrefs", Context.MODE_PRIVATE)
+            sharedPreferences.edit().clear().apply()
+            firebaseAuth.signOut()
+            startActivity(Intent(requireContext(), LoginActivity::class.java))
+            activity?.finish()
         }
+
+        return view
     }
+
+    private fun fetchProfileData(email: String) {
+        firestore.collection("students")
+            .whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val doc = documents.documents[0]
+                    nameText.text = doc.getString("fullName")
+                    levelText.text = doc.getString("level")
+                    specialtyText.text = doc.getString("specialty")
+                    studentNumberText.text = doc.getString("studentNumber")
+                    birthDateText.text = doc.getString("birthDate")
+                    birthPlaceText.text = doc.getString("birthPlace")
+
+                    val profileImageUrl = doc.getString("imageUrl")
+                    if (!profileImageUrl.isNullOrEmpty()) {
+                        Glide.with(requireContext())
+                            .load(profileImageUrl)
+                            .placeholder(R.drawable.user_icn)
+                            .into(profileImage)
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), "No profile data found.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
 }

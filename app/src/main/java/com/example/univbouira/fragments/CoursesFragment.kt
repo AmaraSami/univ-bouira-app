@@ -107,17 +107,39 @@ class CoursesFragment : Fragment() {
     }
 
     private fun loadStudentName() {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        db.collection("students").document(uid)
+        val email = FirebaseAuth.getInstance().currentUser?.email ?: return
+
+        // Try to get from students collection first
+        db.collection("students")
+            .whereEqualTo("email", email)
             .get()
-            .addOnSuccessListener { doc ->
-                val name = doc.getString("fullName") ?: "Student"
-                binding.welcomeText.text = "Hi, $name 👋"
+            .addOnSuccessListener { studentResult ->
+                if (!studentResult.isEmpty) {
+                    val name = studentResult.documents[0].getString("fullName") ?: "Student"
+                    binding.welcomeText.text = "Hi, $name 👋"
+                } else {
+                    // Not a student? Try instructors
+                    db.collection("instructors")
+                        .whereEqualTo("email", email)
+                        .get()
+                        .addOnSuccessListener { instructorResult ->
+                            if (!instructorResult.isEmpty) {
+                                val name = instructorResult.documents[0].getString("name") ?: "Instructor"
+                                binding.welcomeText.text = "Hi, $name 👋"
+                            } else {
+                                binding.welcomeText.text = "Hi 👋"
+                            }
+                        }
+                        .addOnFailureListener {
+                            binding.welcomeText.text = "Hi 👋"
+                        }
+                }
             }
             .addOnFailureListener {
                 binding.welcomeText.text = "Hi 👋"
             }
     }
+
 
     private fun loadInstructors() {
         showInstructorLoading(true)
