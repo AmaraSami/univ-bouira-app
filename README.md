@@ -4,6 +4,22 @@
   <img src="screenshots/univ-app-banner.png" alt="University of Bouira App Logo" />
 </p>
 
+<p align="center">
+  <a href="https://github.com/AmaraSami/univ-bouira-app/stargazers">
+    <img src="https://img.shields.io/github/stars/AmaraSami/univ-bouira-app?style=social" alt="GitHub Stars">
+  </a>
+  <a href="https://github.com/AmaraSami/univ-bouira-app/network/members">
+    <img src="https://img.shields.io/github/forks/AmaraSami/univ-bouira-app?style=social" alt="GitHub Forks">
+  </a>
+  <a href="https://github.com/AmaraSami/univ-bouira-app/watchers">
+    <img src="https://img.shields.io/github/watchers/AmaraSami/univ-bouira-app?style=social" alt="GitHub Watchers">
+  </a>
+  <a href="https://github.com/AmaraSami/univ-bouira-app">
+    <img src="https://img.shields.io/github/last-commit/AmaraSami/univ-bouira-app" alt="Last Commit">
+  </a>
+</p>
+
+
 ## Overview
 
 The University of Bouira Mobile Application is a comprehensive platform designed to connect students, professors, and administrative staff at the University of Bouira. This Android application streamlines academic processes, enhances communication, and provides essential tools for the university community.
