@@ -5,24 +5,20 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.univbouira.databinding.LoginActivityBinding
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import org.json.JSONObject
-import java.util.concurrent.Executors
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: LoginActivityBinding
-    private val client = OkHttpClient()
-    private val executor = Executors.newSingleThreadExecutor()
-    private val API_BASE = "https://progres.mesrs.dz"
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
-        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
-        if (isLoggedIn) {
+        if (sharedPref.getBoolean("isLoggedIn", false)) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
             return
@@ -31,78 +27,54 @@ class LoginActivity : AppCompatActivity() {
         binding = LoginActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+
         binding.loginbtn.setOnClickListener {
-            val studentNumber = binding.inputNce.text.toString().trim()
+            val email = binding.inputNce.text.toString().trim()
             val password = binding.inputMdp.text.toString().trim()
 
-            if (studentNumber.length != 12 || password.length != 8) {
-                Toast.makeText(this, "Vérifiez vos identifiants", Toast.LENGTH_SHORT).show()
+            if (!email.endsWith("@univ-bouira.dz") || password.length != 12) {
+                Toast.makeText(this, "Email ou mot de passe invalide", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            loginWithApi(studentNumber, password)
+            loginUser(email, password)
         }
     }
 
-    private fun loginWithApi(username: String, password: String) {
-        executor.execute {
-            try {
-                val JSON = "application/json; charset=utf-8".toMediaType()
-                val json = JSONObject().apply {
-                    put("username", username)
-                    put("password", password)
-                }
+    private fun loginUser(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
+            val userEmail = auth.currentUser?.email ?: return@addOnSuccessListener
 
-                val body = RequestBody.create(JSON, json.toString())
-                val request = Request.Builder()
-                    .url("$API_BASE/api/authentication/v1/")
-                    .post(body)
-                    .build()
-
-                val response = client.newCall(request).execute()
-
-                if (!response.isSuccessful) {
-                    runOnUiThread {
-                        Toast.makeText(this, "Login échoué. Vérifiez vos données", Toast.LENGTH_SHORT).show()
+            // ✅ Check if profile exists and is unique
+            db.collection("students")
+                .whereEqualTo("email", userEmail)
+                .get()
+                .addOnSuccessListener { result ->
+                    if (result.size() != 1) {
+                        auth.signOut()
+                        Toast.makeText(this, "Profil dupliqué ou manquant", Toast.LENGTH_LONG).show()
+                        return@addOnSuccessListener
                     }
-                    return@execute
-                }
 
-                val responseBody = response.body?.string()
-                val loginData = JSONObject(responseBody ?: "")
-
-                val token = loginData.optString("token", null)
-                val uuid = loginData.optString("uuid", null)
-
-                if (token == null || uuid == null) {
-                    runOnUiThread {
-                        Toast.makeText(this, "Échec de l'authentification", Toast.LENGTH_SHORT).show()
-                    }
-                    return@execute
-                }
-
-                runOnUiThread {
+                    val profile = result.documents[0]
                     val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
-                    val editor = sharedPref.edit()
-                    editor.putBoolean("isLoggedIn", true)
-                    editor.apply()
+                    sharedPref.edit()
+                        .putBoolean("isLoggedIn", true)
+                        .putString("email", userEmail)
+                        .apply()
 
-                    Toast.makeText(this, "Bienvenue 👋", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Connexion réussie 🎉", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                runOnUiThread {
-                    Toast.makeText(this, "Erreur réseau ou serveur", Toast.LENGTH_SHORT).show()
+                .addOnFailureListener {
+                    Toast.makeText(this, "Erreur Firestore", Toast.LENGTH_SHORT).show()
                 }
-            }
-        }
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        executor.shutdownNow()
+        }.addOnFailureListener {
+            Toast.makeText(this, "Échec de connexion", Toast.LENGTH_SHORT).show()
+        }
     }
 }
