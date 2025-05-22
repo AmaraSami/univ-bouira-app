@@ -2,6 +2,7 @@ package com.example.univbouira
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.univbouira.databinding.LoginActivityBinding
@@ -30,14 +31,21 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
+        setupHintOnFocus()
+
         binding.loginbtn.setOnClickListener {
-            val email = binding.inputNce.text.toString().trim()
+            val emailPrefix = binding.inputNce.text.toString().trim()
+            val email = "$emailPrefix@univ-bouira.dz"
             val password = binding.inputMdp.text.toString().trim()
 
-            if (!email.endsWith("@univ-bouira.dz")) {
-                Toast.makeText(this, "Invalid university email", Toast.LENGTH_SHORT).show()
+            if (emailPrefix.isEmpty() || password.length != 12) {
+                Toast.makeText(this, "Email ou mot de passe invalide", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            // ✅ Show progress and disable button
+            binding.loginbtn.isEnabled = false
+            binding.loginProgress.visibility = View.VISIBLE
 
             loginUser(email, password)
         }
@@ -47,71 +55,56 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             val userEmail = auth.currentUser?.email ?: return@addOnSuccessListener
 
-            // First check in students
             db.collection("students")
                 .whereEqualTo("email", userEmail)
                 .get()
-                .addOnSuccessListener { studentResult ->
-                    if (studentResult.size() == 1 && password.length == 12) {
-                        // Student detected
-                        val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
-                        sharedPref.edit()
-                            .putBoolean("isLoggedIn", true)
-                            .putString("email", userEmail)
-                            .putString("role", "student")
-                            .apply()
-
-                        Toast.makeText(this, "Logged in as Student", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
-                    } else {
-                        // Not a student? Check in instructors
-                        db.collection("instructors")
-                            .whereEqualTo("email", userEmail)
-                            .get()
-                            .addOnSuccessListener { instructorResult ->
-                                if (instructorResult.size() == 1) {
-                                    // Instructor detected
-                                    val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
-                                    sharedPref.edit()
-                                        .putBoolean("isLoggedIn", true)
-                                        .putString("email", userEmail)
-                                        .putString("role", "instructor")
-                                        .apply()
-
-                                    Toast.makeText(this, "Logged in as Instructor", Toast.LENGTH_SHORT).show()
-                                    startActivity(Intent(this, MainActivity::class.java))
-                                    finish()
-                                } else {
-                                    auth.signOut()
-                                    Toast.makeText(this, "Profile not found or duplicated", Toast.LENGTH_LONG).show()
-                                }
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(this, "Error checking instructor", Toast.LENGTH_SHORT).show()
-                            }
+                .addOnSuccessListener { result ->
+                    if (result.size() != 1) {
+                        auth.signOut()
+                        Toast.makeText(this, "Profil dupliqué ou manquant", Toast.LENGTH_LONG).show()
+                        resetLoginUI()
+                        return@addOnSuccessListener
                     }
+
+                    val profile = result.documents[0]
+                    val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
+                    sharedPref.edit()
+                        .putBoolean("isLoggedIn", true)
+                        .putString("email", userEmail)
+                        .apply()
+
+                    Toast.makeText(this, "Connexion réussie 🎉", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "Error checking student", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Erreur Firestore", Toast.LENGTH_SHORT).show()
+                    resetLoginUI()
                 }
 
         }.addOnFailureListener {
-            Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Échec de connexion", Toast.LENGTH_SHORT).show()
+            resetLoginUI()
         }
     }
 
+    // ✅ Reset UI state after login attempt
+    private fun resetLoginUI() {
+        binding.loginbtn.isEnabled = true
+        binding.loginProgress.visibility = View.GONE
+    }
 
-    private fun saveLoginState(role: String, email: String) {
-        val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
-        sharedPref.edit()
-            .putBoolean("isLoggedIn", true)
-            .putString("email", email)
-            .putString("role", role)
-            .apply()
+    // ✅ Hint behavior on focus
+    private fun setupHintOnFocus() {
+        binding.inputNce.setOnFocusChangeListener { _, hasFocus ->
+            binding.inputNce.hint = if (hasFocus) "" else "Email"
+        }
 
-        Toast.makeText(this, "Login successful 🎉", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+        binding.inputMdp.setOnFocusChangeListener { _, hasFocus ->
+            binding.inputMdp.hint = if (hasFocus) "" else "Mot de Passe"
+        }
+
+        binding.inputNce.hint = "Email"
+        binding.inputMdp.hint = "Mot de Passe"
     }
 }
