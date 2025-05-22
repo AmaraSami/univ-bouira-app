@@ -12,6 +12,7 @@ import com.example.univbouira.R
 import com.example.univbouira.adapters.ModuleAdapter
 import com.example.univbouira.databinding.FragmentModulesBinding
 import com.example.univbouira.models.ModuleItem
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ModulesFragment : Fragment() {
@@ -69,7 +70,6 @@ class ModulesFragment : Fragment() {
 
     private fun setupRecyclerView() {
         moduleAdapter = ModuleAdapter { module ->
-            // Replace Fragment with ManageCoursesFragment and pass arguments
             val fragment = ManageCoursesFragment().apply {
                 arguments = Bundle().apply {
                     putString("moduleCode", module.code)
@@ -78,7 +78,7 @@ class ModulesFragment : Fragment() {
             }
 
             parentFragmentManager.beginTransaction()
-                .replace(R.id.homeFragmentRoot, fragment)  // <-- Make sure your Activity layout has this container
+                .replace(R.id.homeFragmentRoot, fragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -91,25 +91,72 @@ class ModulesFragment : Fragment() {
 
     private fun loadModules() {
         showModuleLoading(true)
-        db.collection("modules")
-            .whereEqualTo("semester", selectedSemester)
-            .get()
-            .addOnSuccessListener { result ->
-                val modules = result.map { it.toObject(ModuleItem::class.java) }
+
+        val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email ?: return
+        val selectedSemesterNumber = if (selectedSemester == "Semestre 1") 1 else 2
+        val allLevels = listOf("L1", "L2", "L3")
+
+        val instructorRef = db.collection("instructors").whereEqualTo("email", currentUserEmail)
+
+        instructorRef.get().addOnSuccessListener { result ->
+            if (result.isEmpty) {
+                Toast.makeText(requireContext(), "Instructor not found", Toast.LENGTH_SHORT).show()
                 showModuleLoading(false)
-                if (modules.isEmpty()) {
-                    binding.recyclerViewModules.visibility = View.GONE
-                    binding.emptyModuleMessage.visibility = View.VISIBLE
-                } else {
-                    moduleAdapter.updateModules(modules)
-                    binding.recyclerViewModules.visibility = View.VISIBLE
-                    binding.emptyModuleMessage.visibility = View.GONE
-                }
+                return@addOnSuccessListener
             }
-            .addOnFailureListener {
-                showModuleLoading(false)
-                Toast.makeText(requireContext(), "Error loading modules", Toast.LENGTH_SHORT).show()
+
+            val instructorDoc = result.documents[0]
+            val assignedCourses = instructorDoc.get("assignedCourses") as? List<String> ?: emptyList()
+
+            val matchedModules = mutableListOf<ModuleItem>()
+            var levelsProcessed = 0
+
+            allLevels.forEach { level ->
+                db.collection("levels")
+                    .document(level)
+                    .collection("courses")
+                    .whereEqualTo("semester", selectedSemesterNumber)
+                    .get()
+                    .addOnSuccessListener { courses ->
+                        for (doc in courses) {
+                            val code = doc.id
+                            val title = doc.getString("title") ?: continue
+                            val semester = (doc.get("semester") as? Long)?.toInt() ?: selectedSemesterNumber
+
+
+                            if (assignedCourses.contains(code)) {
+                                val module = ModuleItem(
+                                    code = code,
+                                    title = title,
+                                    semester = semester
+                                )
+                                matchedModules.add(module)
+                            }
+                        }
+
+                        levelsProcessed++
+                        if (levelsProcessed == allLevels.size) {
+                            showModuleLoading(false)
+                            if (matchedModules.isEmpty()) {
+                                binding.recyclerViewModules.visibility = View.GONE
+                                binding.emptyModuleMessage.visibility = View.VISIBLE
+                            } else {
+                                moduleAdapter.updateModules(matchedModules)
+                                binding.recyclerViewModules.visibility = View.VISIBLE
+                                binding.emptyModuleMessage.visibility = View.GONE
+                            }
+                        }
+                    }
+                    .addOnFailureListener {
+                        showModuleLoading(false)
+                        Toast.makeText(requireContext(), "Failed loading $level modules", Toast.LENGTH_SHORT).show()
+                    }
             }
+
+        }.addOnFailureListener {
+            showModuleLoading(false)
+            Toast.makeText(requireContext(), "Error fetching instructor data", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showModuleLoading(loading: Boolean) {

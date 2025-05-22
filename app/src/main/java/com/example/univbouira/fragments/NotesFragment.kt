@@ -13,6 +13,7 @@ import com.example.univbouira.R
 import com.example.univbouira.adapters.NotesAdapter
 import com.example.univbouira.databinding.FragmentNotesBinding
 import com.example.univbouira.models.ModuleItem
+import com.example.univbouira.models.NotesItems
 import com.example.univbouira.ui.ModuleNotesDetailActivity
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -21,7 +22,7 @@ class NotesFragment : Fragment() {
     private var _binding: FragmentNotesBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: NotesAdapter
-    private val itemList = mutableListOf<ModuleItem>()
+    private val itemList = mutableListOf<NotesItems>()
     private val db = FirebaseFirestore.getInstance()
     private var selectedSemester = "semestre1"
 
@@ -96,7 +97,7 @@ class NotesFragment : Fragment() {
                 for (doc in result) {
                     val moduleName = doc.getString("name") ?: continue
                     val description = doc.getString("description") ?: "Module description"
-                    itemList.add(ModuleItem(moduleName, description, "--"))
+                    itemList.add(NotesItems(moduleName, description, "--"))
                 }
 
                 adapter.notifyDataSetChanged()

@@ -34,8 +34,8 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.inputNce.text.toString().trim()
             val password = binding.inputMdp.text.toString().trim()
 
-            if (!email.endsWith("@univ-bouira.dz") || password.length != 12) {
-                Toast.makeText(this, "Email ou mot de passe invalide", Toast.LENGTH_SHORT).show()
+            if (!email.endsWith("@univ-bouira.dz")) {
+                Toast.makeText(this, "Invalid university email", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -47,34 +47,71 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             val userEmail = auth.currentUser?.email ?: return@addOnSuccessListener
 
-            // ✅ Check if profile exists and is unique
+            // First check in students
             db.collection("students")
                 .whereEqualTo("email", userEmail)
                 .get()
-                .addOnSuccessListener { result ->
-                    if (result.size() != 1) {
-                        auth.signOut()
-                        Toast.makeText(this, "Profil dupliqué ou manquant", Toast.LENGTH_LONG).show()
-                        return@addOnSuccessListener
+                .addOnSuccessListener { studentResult ->
+                    if (studentResult.size() == 1 && password.length == 12) {
+                        // Student detected
+                        val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
+                        sharedPref.edit()
+                            .putBoolean("isLoggedIn", true)
+                            .putString("email", userEmail)
+                            .putString("role", "student")
+                            .apply()
+
+                        Toast.makeText(this, "Logged in as Student", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+                    } else {
+                        // Not a student? Check in instructors
+                        db.collection("instructors")
+                            .whereEqualTo("email", userEmail)
+                            .get()
+                            .addOnSuccessListener { instructorResult ->
+                                if (instructorResult.size() == 1) {
+                                    // Instructor detected
+                                    val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
+                                    sharedPref.edit()
+                                        .putBoolean("isLoggedIn", true)
+                                        .putString("email", userEmail)
+                                        .putString("role", "instructor")
+                                        .apply()
+
+                                    Toast.makeText(this, "Logged in as Instructor", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, MainActivity::class.java))
+                                    finish()
+                                } else {
+                                    auth.signOut()
+                                    Toast.makeText(this, "Profile not found or duplicated", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "Error checking instructor", Toast.LENGTH_SHORT).show()
+                            }
                     }
-
-                    val profile = result.documents[0]
-                    val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
-                    sharedPref.edit()
-                        .putBoolean("isLoggedIn", true)
-                        .putString("email", userEmail)
-                        .apply()
-
-                    Toast.makeText(this, "Connexion réussie 🎉", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "Erreur Firestore", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error checking student", Toast.LENGTH_SHORT).show()
                 }
 
         }.addOnFailureListener {
-            Toast.makeText(this, "Échec de connexion", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show()
         }
+    }
+
+
+    private fun saveLoginState(role: String, email: String) {
+        val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
+        sharedPref.edit()
+            .putBoolean("isLoggedIn", true)
+            .putString("email", email)
+            .putString("role", role)
+            .apply()
+
+        Toast.makeText(this, "Login successful 🎉", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }

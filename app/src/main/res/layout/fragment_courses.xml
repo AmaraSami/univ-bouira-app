@@ -77,13 +77,6 @@
                     android:gravity="center_vertical"
                     android:layout_marginBottom="12dp">
 
-                    <ImageView
-                        android:id="@+id/profileImage"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/circle_background"
-                        android:scaleType="centerCrop" />
-
                     <TextView
                         android:id="@+id/welcomeText"
                         android:layout_width="wrap_content"

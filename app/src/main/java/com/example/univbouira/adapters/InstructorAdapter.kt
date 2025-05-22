@@ -30,7 +30,7 @@ class InstructorAdapter(
 
     override fun onBindViewHolder(holder: InstructorViewHolder, position: Int) {
         val instructor = instructorList[position]
-        holder.binding.instructorName.text = instructor.name
+        holder.binding.instructorName.text = instructor.fullName
 
         Glide.with(context)
             .load(if (instructor.imageUrl.isNullOrEmpty()) R.drawable.user_icn else instructor.imageUrl)

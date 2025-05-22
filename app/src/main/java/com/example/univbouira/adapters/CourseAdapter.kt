@@ -1,18 +1,19 @@
 package com.example.univbouira.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.univbouira.models.LearningCourse
 import com.example.univbouira.databinding.ItemCourseBinding
+import com.example.univbouira.models.ModuleItem
 
 class CourseAdapter(
-    private val onItemClick: (LearningCourse) -> Unit
+    private val onItemClick: (ModuleItem) -> Unit
 ) : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>() {
 
-    private var courseList: List<LearningCourse> = listOf()
+    private var courseList: List<ModuleItem> = listOf()
 
-    fun updateCourses(newCourseList: List<LearningCourse>) {
+    fun updateModuleList(newCourseList: List<ModuleItem>) {
         courseList = newCourseList
         notifyDataSetChanged()
     }
@@ -20,9 +21,9 @@ class CourseAdapter(
     inner class CourseViewHolder(private val binding: ItemCourseBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(course: LearningCourse) {
-            binding.courseNameTextView.text = course.name
-            binding.professorNameTextView.text = course.professor
+        fun bind(course: ModuleItem) {
+            binding.courseNameTextView.text = course.title
+            binding.professorNameTextView.visibility = View.GONE  // no professor data in ModuleItem
 
             binding.root.setOnClickListener {
                 onItemClick(course)
@@ -41,4 +42,3 @@ class CourseAdapter(
 
     override fun getItemCount(): Int = courseList.size
 }
-

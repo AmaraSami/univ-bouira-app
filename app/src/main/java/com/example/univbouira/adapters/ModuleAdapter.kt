@@ -10,24 +10,12 @@ class ModuleAdapter(
     private val onItemClick: (ModuleItem) -> Unit
 ) : RecyclerView.Adapter<ModuleAdapter.ModuleViewHolder>() {
 
-    private var moduleList: List<ModuleItem> = emptyList()
+    private val moduleList = mutableListOf<ModuleItem>()
 
-    fun updateModules(newModuleList: List<ModuleItem>) {
-        moduleList = newModuleList
+    fun updateModules(modules: List<ModuleItem>) {
+        moduleList.clear()
+        moduleList.addAll(modules)
         notifyDataSetChanged()
-    }
-
-    inner class ModuleViewHolder(private val binding: ItemModuleBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(module: ModuleItem) {
-            binding.textModuleName.text = module.title
-            binding.textModuleLevel.text = module.subtitle.ifEmpty { "Niveau inconnu" }
-
-            binding.root.setOnClickListener {
-                onItemClick(module)
-            }
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModuleViewHolder {
@@ -40,4 +28,17 @@ class ModuleAdapter(
     }
 
     override fun getItemCount(): Int = moduleList.size
+
+    inner class ModuleViewHolder(private val binding: ItemModuleBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(module: ModuleItem) {
+            binding.moduleCode.text = module.code
+            binding.moduleTitle.text = module.title
+
+            binding.root.setOnClickListener {
+                onItemClick(module)
+            }
+        }
+    }
 }

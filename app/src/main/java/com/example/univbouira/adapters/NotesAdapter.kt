@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.univbouira.R
-import com.example.univbouira.models.ModuleItem
+import com.example.univbouira.models.NotesItems
 
 class NotesAdapter(
-    private val itemList: List<ModuleItem>,
-    private val onClick: (ModuleItem) -> Unit
+    private val itemList: List<NotesItems>,
+    private val onClick: (NotesItems) -> Unit
 ) : RecyclerView.Adapter<NotesAdapter.ModuleViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModuleViewHolder {
