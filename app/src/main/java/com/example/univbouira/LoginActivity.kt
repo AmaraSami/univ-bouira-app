@@ -2,6 +2,7 @@ package com.example.univbouira
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.univbouira.databinding.LoginActivityBinding
@@ -30,14 +31,21 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
+        setupHintOnFocus()
+
         binding.loginbtn.setOnClickListener {
-            val email = binding.inputNce.text.toString().trim()
+            val emailPrefix = binding.inputNce.text.toString().trim()
+            val email = "$emailPrefix@univ-bouira.dz"
             val password = binding.inputMdp.text.toString().trim()
 
-            if (!email.endsWith("@univ-bouira.dz") || password.length != 12) {
+            if (emailPrefix.isEmpty() || password.length != 12) {
                 Toast.makeText(this, "Email ou mot de passe invalide", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            // ✅ Show progress and disable button
+            binding.loginbtn.isEnabled = false
+            binding.loginProgress.visibility = View.VISIBLE
 
             loginUser(email, password)
         }
@@ -47,7 +55,6 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             val userEmail = auth.currentUser?.email ?: return@addOnSuccessListener
 
-            // ✅ Check if profile exists and is unique
             db.collection("students")
                 .whereEqualTo("email", userEmail)
                 .get()
@@ -55,6 +62,7 @@ class LoginActivity : AppCompatActivity() {
                     if (result.size() != 1) {
                         auth.signOut()
                         Toast.makeText(this, "Profil dupliqué ou manquant", Toast.LENGTH_LONG).show()
+                        resetLoginUI()
                         return@addOnSuccessListener
                     }
 
@@ -71,10 +79,32 @@ class LoginActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Erreur Firestore", Toast.LENGTH_SHORT).show()
+                    resetLoginUI()
                 }
 
         }.addOnFailureListener {
             Toast.makeText(this, "Échec de connexion", Toast.LENGTH_SHORT).show()
+            resetLoginUI()
         }
+    }
+
+    // ✅ Reset UI state after login attempt
+    private fun resetLoginUI() {
+        binding.loginbtn.isEnabled = true
+        binding.loginProgress.visibility = View.GONE
+    }
+
+    // ✅ Hint behavior on focus
+    private fun setupHintOnFocus() {
+        binding.inputNce.setOnFocusChangeListener { _, hasFocus ->
+            binding.inputNce.hint = if (hasFocus) "" else "Email"
+        }
+
+        binding.inputMdp.setOnFocusChangeListener { _, hasFocus ->
+            binding.inputMdp.hint = if (hasFocus) "" else "Mot de Passe"
+        }
+
+        binding.inputNce.hint = "Email"
+        binding.inputMdp.hint = "Mot de Passe"
     }
 }

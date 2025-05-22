@@ -60,11 +60,15 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="57dp"
         android:layout_marginRight="30dp"
-        android:hint="Email"
+        app:hintEnabled="false"
+        app:endIconMode="none"
+        app:suffixText="@univ-bouira.dz"
+        app:suffixTextColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/Signin"
-        app:startIconDrawable="@drawable/id3">
+        app:startIconDrawable="@drawable/id3"
+        style="@style/AlwaysVisibleSuffix">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_nce"
@@ -75,9 +79,12 @@
             android:inputType="textEmailAddress"
             android:textAlignment="center"
             android:textSize="13sp"
+            android:hint="Email prefix (e.g. mohamed.ali)"
             app:hintTextColor="#3E3333" />
     </com.google.android.material.textfield.TextInputLayout>
 
+
+    <!-- PASSWORD FIELD -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/log2"
         android:layout_width="match_parent"
@@ -85,14 +92,15 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="30dp"
-        android:hint="Mot de Passe"
+        app:hintEnabled="false"
         app:counterEnabled="true"
         app:counterMaxLength="12"
-        app:hintTextColor="#3E3333"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/log1"
-        app:startIconDrawable="@drawable/lock">
+        app:startIconDrawable="@drawable/lock"
+        app:endIconMode="password_toggle"
+        >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_mdp"
@@ -100,30 +108,44 @@
             android:layout_height="match_parent"
             android:background="@drawable/inputtype"
             android:gravity="center"
-            android:inputType="numberPassword"
+            android:inputType="textPassword"
             android:textAlignment="center"
             android:textSize="13sp"
+            android:hint="Mot de Passe"
+            android:maxLength="12"
             app:hintTextColor="#3E3333" />
     </com.google.android.material.textfield.TextInputLayout>
-
     <Button
         android:id="@+id/loginbtn"
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="60dp"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="80dp"
         android:background="@drawable/btn"
         android:text="Log In"
-        android:textSize="36sp"
-        app:backgroundTint="#4DBF20"
-        app:icon="@drawable/icn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.05"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/log2" />
+    <!-- Progress bar shown while logging in (hidden by default) -->
+    <ProgressBar
+        android:id="@+id/login_progress"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/loginbtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
