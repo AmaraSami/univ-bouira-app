@@ -39,11 +39,10 @@ class LoginActivity : AppCompatActivity() {
             val email = "$emailPrefix@univ-bouira.dz"
 
             if (emailPrefix.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Email ou mot de passe invalide", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // ✅ Show progress
             binding.loginbtn.isEnabled = false
             binding.loginProgress.visibility = View.VISIBLE
 
@@ -55,7 +54,6 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             val userEmail = auth.currentUser?.email ?: return@addOnSuccessListener
 
-            // 🧑‍🎓 Check Student
             db.collection("students")
                 .whereEqualTo("email", userEmail)
                 .get()
@@ -63,7 +61,6 @@ class LoginActivity : AppCompatActivity() {
                     if (studentResult.size() == 1 && password.length == 12) {
                         saveLoginState("student", userEmail)
                     } else {
-                        // 👨‍🏫 Check Instructor
                         db.collection("instructors")
                             .whereEqualTo("email", userEmail)
                             .get()
@@ -72,23 +69,23 @@ class LoginActivity : AppCompatActivity() {
                                     saveLoginState("instructor", userEmail)
                                 } else {
                                     auth.signOut()
-                                    Toast.makeText(this, "Profil non trouvé ou dupliqué", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this, "Profile not found or duplicated", Toast.LENGTH_LONG).show()
                                     resetLoginUI()
                                 }
                             }
                             .addOnFailureListener {
-                                Toast.makeText(this, "Erreur lors de la vérification du profil enseignant", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Error while checking instructor profile", Toast.LENGTH_SHORT).show()
                                 resetLoginUI()
                             }
                     }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "Erreur lors de la vérification du profil étudiant", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error while checking student profile", Toast.LENGTH_SHORT).show()
                     resetLoginUI()
                 }
 
         }.addOnFailureListener {
-            Toast.makeText(this, "Échec de la connexion", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Login failed", Toast.LENGTH_SHORT).show()
             resetLoginUI()
         }
     }
@@ -101,7 +98,7 @@ class LoginActivity : AppCompatActivity() {
             .putString("role", role)
             .apply()
 
-        val message = if (role == "student") "Connexion étudiant réussie 🎓" else "Connexion enseignant réussie 👨‍🏫"
+        val message = if (role == "student") "Student login successful 🎓" else "Instructor login successful 👨‍🏫"
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, MainActivity::class.java))
         finish()
@@ -117,10 +114,10 @@ class LoginActivity : AppCompatActivity() {
             binding.inputNce.hint = if (hasFocus) "" else "Email"
         }
         binding.inputMdp.setOnFocusChangeListener { _, hasFocus ->
-            binding.inputMdp.hint = if (hasFocus) "" else "Mot de Passe"
+            binding.inputMdp.hint = if (hasFocus) "" else "Password"
         }
 
         binding.inputNce.hint = "Email"
-        binding.inputMdp.hint = "Mot de Passe"
+        binding.inputMdp.hint = "Password"
     }
 }

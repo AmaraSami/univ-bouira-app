@@ -29,10 +29,10 @@
 
     <ImageView
         android:id="@+id/logo_univ"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="170dp"
         android:layout_marginStart="115dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="115dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,7 +111,7 @@
             android:inputType="textPassword"
             android:textAlignment="center"
             android:textSize="13sp"
-            android:hint="Mot de Passe"
+            android:hint="Password"
             android:maxLength="12"
             app:hintTextColor="#3E3333" />
     </com.google.android.material.textfield.TextInputLayout>
