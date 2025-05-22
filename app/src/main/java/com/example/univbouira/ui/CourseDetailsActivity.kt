@@ -1,135 +1,88 @@
 package com.example.univbouira.ui
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.univbouira.adapter.MaterialAdapter
+import com.example.univbouira.adapters.MaterialAdapter
 import com.example.univbouira.databinding.ActivityCourseDetailsBinding
-import com.example.univbouira.models.CourseMaterial
+import com.example.univbouira.models.UploadedFile
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
-import java.io.File
 
-class CourseDetailsActivity : AppCompatActivity(), MaterialAdapter.OnItemClickListener {
+class CourseDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCourseDetailsBinding
-    private lateinit var adapter: MaterialAdapter
-    private val materialList = mutableListOf<CourseMaterial>()
-
     private val db = FirebaseFirestore.getInstance()
-    private val storage = FirebaseStorage.getInstance()
-
-    private val networkReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (!isConnected()) {
-                Toast.makeText(this@CourseDetailsActivity, "No internet connection", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+    private val auth = FirebaseAuth.getInstance()
+    private val files = mutableListOf<UploadedFile>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCourseDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val courseCode = intent.getStringExtra("courseCode") ?: run {
+            Toast.makeText(this, "Course code missing", Toast.LENGTH_SHORT).show()
+            finish(); return
+        }
         val courseName = intent.getStringExtra("courseName") ?: ""
         val professorName = intent.getStringExtra("professorName") ?: ""
 
         binding.courseNameText.text = courseName
         binding.professorNameText.text = "By $professorName"
 
-        adapter = MaterialAdapter(this, materialList, this)
         binding.recyclerViewMaterials.layoutManager = LinearLayoutManager(this)
-        binding.recyclerViewMaterials.adapter = adapter
+        binding.recyclerViewMaterials.adapter = MaterialAdapter(this, files)
 
-        loadCourseMaterials(courseName)
-    }
+        // Fetch student level
+        val email = auth.currentUser?.email
+        if (email.isNullOrEmpty()) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-    private fun loadCourseMaterials(courseName: String) {
-        db.collection("materials")
-            .whereEqualTo("courseName", courseName)
+        binding.progressBar.visibility = View.VISIBLE
+        db.collection("students")
+            .whereEqualTo("email", email)
+            .limit(1)
             .get()
-            .addOnSuccessListener { result ->
-                materialList.clear()
-                for (doc in result) {
-                    val material = doc.toObject(CourseMaterial::class.java)
-                    materialList.add(material)
-                }
-                adapter.notifyDataSetChanged()
+            .addOnSuccessListener { snaps ->
+                val level = snaps.firstOrNull()?.getString("level") ?: "L3"
+                loadFiles(level, courseCode)
             }
             .addOnFailureListener {
-                Toast.makeText(this, "Failed to load materials", Toast.LENGTH_SHORT).show()
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(this, "Failed to fetch student info", Toast.LENGTH_SHORT).show()
             }
     }
 
-    override fun onDownloadClick(material: CourseMaterial) {
-        if (!isConnected()) {
-            Toast.makeText(this, "No internet. Please connect to download.", Toast.LENGTH_SHORT).show()
-            return
-        }
+    private fun loadFiles(level: String, courseCode: String) {
+        db.collection("levels")
+            .document(level)
+            .collection("courses")
+            .document(courseCode)
+            .collection("uploads")
+            .orderBy("timestamp")
+            .get()
+            .addOnSuccessListener { snaps ->
+                files.clear()
+                for (doc in snaps) {
+                    files.add(doc.toObject(UploadedFile::class.java).copy(id = doc.id))
+                }
+                binding.progressBar.visibility = View.GONE
 
-        val ref = storage.getReferenceFromUrl(material.fileUrl)
-        val localFile = File(getExternalFilesDir(null), material.fileName)
-
-        ref.getFile(localFile).addOnSuccessListener {
-            Toast.makeText(this, "Downloaded to ${localFile.path}", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener {
-            Toast.makeText(this, "Download failed", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onViewClick(material: CourseMaterial) {
-        val localFile = File(getExternalFilesDir(null), material.fileName)
-        if (!localFile.exists()) {
-            Toast.makeText(this, "File not downloaded. Please download it first.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val uri = Uri.fromFile(localFile)
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(uri, getMimeType(material.fileName))
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-        try {
-            startActivity(intent)
-        } catch (e: Exception) {
-            Toast.makeText(this, "No app found to open this file", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun getMimeType(fileName: String): String {
-        return when {
-            fileName.endsWith(".pdf") -> "application/pdf"
-            fileName.endsWith(".doc") || fileName.endsWith(".docx") -> "application/msword"
-            fileName.endsWith(".ppt") || fileName.endsWith(".pptx") -> "application/vnd.ms-powerpoint"
-            fileName.endsWith(".xls") || fileName.endsWith(".xlsx") -> "application/vnd.ms-excel"
-            fileName.endsWith(".txt") -> "text/plain"
-            else -> "*/*"
-        }
-    }
-
-    private fun isConnected(): Boolean {
-        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = cm.activeNetwork ?: return false
-        val capabilities = cm.getNetworkCapabilities(network) ?: return false
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-    }
-
-    override fun onStop() {
-        super.onStop()
-        unregisterReceiver(networkReceiver)
+                if (files.isEmpty()) {
+                    binding.noMaterialsText.visibility = View.VISIBLE
+                } else {
+                    binding.recyclerViewMaterials.visibility = View.VISIBLE
+                    binding.recyclerViewMaterials.adapter?.notifyDataSetChanged()
+                }
+            }
+            .addOnFailureListener {
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(this, "Failed to load materials", Toast.LENGTH_SHORT).show()
+            }
     }
 }

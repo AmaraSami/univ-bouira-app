@@ -74,9 +74,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:foreground="@drawable/profile_card_border"
-            app:cardBackgroundColor="@android:color/white"
+            app:cardBackgroundColor="#ebebeb"
             app:cardElevation="0dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
             app:layout_constraintTop_toTopOf="@+id/guideline2">
 
@@ -90,7 +90,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Student Name"
-                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -140,7 +141,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:foreground="@drawable/profile_card_border"
-            app:cardBackgroundColor="@android:color/white"
+            app:cardBackgroundColor="#ebebeb"
             app:cardElevation="0dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
@@ -167,7 +168,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="Student Number"
-                    android:textColor="@android:color/holo_green_dark"
+                    android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@id/iconStudent"
                     app:layout_constraintTop_toTopOf="@id/iconStudent" />
 
@@ -188,7 +189,7 @@
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@android:color/holo_green_dark"
+                    android:background="@color/green"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/editStudentNumber" />
@@ -208,7 +209,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="Date of Birth"
-                    android:textColor="@android:color/holo_green_dark"
+                    android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@id/iconBirthDate"
                     app:layout_constraintTop_toTopOf="@id/iconBirthDate" />
 
@@ -229,7 +230,7 @@
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_marginTop="8dp"
-                    android:background="@android:color/holo_green_dark"
+                    android:background="@color/green"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/editBirthDate" />
@@ -249,7 +250,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="Place of Birth"
-                    android:textColor="@android:color/holo_green_dark"
+                    android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@id/iconBirthPlace"
                     app:layout_constraintTop_toTopOf="@id/iconBirthPlace" />
 

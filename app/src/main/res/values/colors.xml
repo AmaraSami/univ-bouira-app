@@ -15,5 +15,5 @@
     <color name="todayHighlight">#2E7D32</color> <!-- Very light Yellow -->
     <color name="activeButtonColor">#E2E0E0</color> <!-- White (Active) -->
     <color name="inactiveButtonColor">#007BA7</color> <!-- Blue (Inactive) -->
-
+    <color name="green">#005D22</color>
 </resources>
