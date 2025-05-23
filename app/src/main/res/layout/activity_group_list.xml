@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/groupListRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- ✅ Keep the custom header (contains txtLogo) -->
+        <include
+            android:id="@+id/header"
+            layout="@layout/custom_header" />
+
+        <!-- ✅ Dynamic module title below the header -->
+        <TextView
+            android:id="@+id/moduleTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Module Title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:padding="12dp"
+            android:layout_marginTop="4dp" />
+
+        <!-- 🔻 RecyclerView for Groups -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/groupRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="16dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true"
+            android:scrollbars="vertical" />
+
+        <!-- 🔃 Loading Indicator -->
+        <ProgressBar
+            android:id="@+id/groupLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginBottom="12dp" />
+
+        <!-- ⚠️ Empty State Message -->
+        <TextView
+            android:id="@+id/emptyGroupMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No groups available"
+            android:textAlignment="center"
+            android:visibility="gone"
+            android:textColor="@color/gray"
+            android:padding="16dp"
+            android:textSize="16sp" />
+    </LinearLayout>
+</FrameLayout>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/insertGradesRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".activities.InsertGradesActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- 🔷 Header -->
+        <include
+            android:id="@+id/header"
+            layout="@layout/custom_header" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/textInsertGradesTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Insert Student Grades"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#212121"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Input Fields Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#F5F5F5"
+            android:padding="24dp"
+            android:layout_marginBottom="32dp"
+            android:elevation="4dp"
+            android:clipToPadding="false"
+            android:backgroundTint="#FAFAFA"
+            android:layout_marginHorizontal="8dp"
+            android:gravity="center">
+
+            <!-- TD Grade -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Grade TD"
+                android:textSize="16sp"
+                android:textColor="#444444"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/editTextGradeTD"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:inputType="numberDecimal"
+                android:hint="Enter TD grade"
+                android:background="@drawable/rounded_edittext_bg"
+                android:padding="12dp"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <!-- TP Grade -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Grade TP"
+                android:textSize="16sp"
+                android:textColor="#444444"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/editTextGradeTP"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:inputType="numberDecimal"
+                android:hint="Enter TP grade"
+                android:background="@drawable/rounded_edittext_bg"
+                android:padding="12dp"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <!-- Exam Grade -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Grade EXAM"
+                android:textSize="16sp"
+                android:textColor="#444444"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/editTextGradeExam"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:inputType="numberDecimal"
+                android:hint="Enter EXAM grade"
+                android:background="@drawable/rounded_edittext_bg"
+                android:padding="12dp"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/buttonSaveGrades"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Save Grades"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#3F51B5"
+            android:background="@drawable/rounded_button_bg" />
+        <ProgressBar
+            android:id="@+id/progressSaving"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            style="?android:attr/progressBarStyleLarge" />
+
+    </LinearLayout>
+
+</FrameLayout>

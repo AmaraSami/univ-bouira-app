@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/studentListRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".activities.StudentListActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- 🔷 Header -->
+        <include
+            android:id="@+id/header"
+            layout="@layout/custom_header" />
+
+        <!-- 🔸 Title -->
+        <TextView
+            android:id="@+id/textGroupTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Students"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:padding="12dp" />
+
+        <!-- 🔽 Student List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/studentRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="16dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true" />
+        <TextView
+            android:id="@+id/emptyStudentMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No students available"
+            android:textAlignment="center"
+            android:visibility="gone"
+            android:textColor="@color/gray"
+            android:padding="16dp"
+            android:textSize="16sp" />
+
+        <!-- 🔄 Loading and Empty State -->
+        <ProgressBar
+            android:id="@+id/studentLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_margin="16dp" />
+    </LinearLayout>
+</FrameLayout>
