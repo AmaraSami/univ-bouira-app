@@ -1,47 +1,55 @@
-package com.example.univbouira.adapter
+package com.example.univbouira.adapters
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.univbouira.R
-import com.example.univbouira.models.CourseMaterial
+import com.example.univbouira.models.UploadedFile
 
 class MaterialAdapter(
-    private val context: android.content.Context,
-    private val materials: List<CourseMaterial>,
-    private val listener: OnItemClickListener
-) : RecyclerView.Adapter<MaterialAdapter.MaterialViewHolder>() {
+    private val context: Context,
+    private val materials: List<UploadedFile>
+) : RecyclerView.Adapter<MaterialAdapter.ViewHolder>() {
 
-    interface OnItemClickListener {
-        fun onDownloadClick(material: CourseMaterial)
-        fun onViewClick(material: CourseMaterial)
+    inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        val title: TextView = v.findViewById(R.id.materialTitle)
+        val type: TextView = v.findViewById(R.id.materialType)
+        val viewButton: Button = v.findViewById(R.id.viewButton)
+        val downloadButton: Button = v.findViewById(R.id.downloadButton)
     }
 
-    inner class MaterialViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val titleText: TextView = itemView.findViewById(R.id.materialTitle)
-        val typeText: TextView = itemView.findViewById(R.id.materialType)
-        val downloadButton: Button = itemView.findViewById(R.id.downloadButton)
-        val viewButton: Button = itemView.findViewById(R.id.viewButton)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v = LayoutInflater.from(context).inflate(R.layout.item_material, parent, false)
+        return ViewHolder(v)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MaterialViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_material, parent, false)
-        return MaterialViewHolder(view)
-    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val file = materials[position]
+        holder.title.text = file.name
+        holder.type.text = file.moduleTitle
 
-    override fun onBindViewHolder(holder: MaterialViewHolder, position: Int) {
-        val material = materials[position]
-        holder.titleText.text = material.title
-        holder.typeText.text = material.type.capitalize()
-
-        holder.downloadButton.setOnClickListener {
-            listener.onDownloadClick(material)
+        // View via external PDF app/browser
+        holder.viewButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(file.url)
+                setDataAndType(data, "application/pdf")
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            }
+            context.startActivity(intent)
         }
 
-        holder.viewButton.setOnClickListener {
-            listener.onViewClick(material)
+        // Download via system DownloadManager
+        holder.downloadButton.setOnClickListener {
+            val dmIntent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(file.url)
+            }
+            context.startActivity(dmIntent)
         }
     }
 

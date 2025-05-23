@@ -54,6 +54,26 @@
                 android:textColor="#555555"
                 android:layout_marginBottom="12dp" />
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                android:layout_marginBottom="12dp" />
+
+            <!-- No Materials Text -->
+            <TextView
+                android:id="@+id/noMaterialsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No materials available for this course."
+                android:textColor="#888888"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewMaterials"
                 android:layout_width="match_parent"

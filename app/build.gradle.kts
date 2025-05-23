@@ -55,22 +55,22 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation ("com.google.firebase:firebase-firestore-ktx:25.1.4")
-    implementation ("com.google.firebase:firebase-analytics-ktx")
-    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
-    implementation ("com.google.firebase:firebase-storage:21.0.1")
-    implementation ("com.google.firebase:firebase-auth:23.2.0")
+    implementation (libs.firebase.firestore.ktx)
+    implementation (libs.firebase.analytics.ktx)
+    implementation(platform(libs.firebase.bom))
+    implementation (libs.firebase.storage)
+    implementation (libs.firebase.auth)
 
     implementation (libs.volley)
 
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
 
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
+    implementation (libs.glide)
+    kapt(libs.compiler)
 
 
     implementation (libs.circleimageview)

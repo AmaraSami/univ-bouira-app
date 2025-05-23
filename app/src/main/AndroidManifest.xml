@@ -34,7 +34,6 @@
             android:name=".ui.ModuleNotesDetailActivity"
             android:exported="false"/>
 
-
         <activity
             android:name=".ui.CourseDetailsActivity"
             android:exported="false" />
