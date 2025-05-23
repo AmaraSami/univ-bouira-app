@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- University Logo -->
+        <ImageView
+            android:id="@+id/txtlogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/univ_txt_logo"
+            android:contentDescription="University Logo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="2dp" />
+
+        <!-- Guidelines renamed -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontalGuidelineBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.85" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontalGuidelineTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.15" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/verticalGuidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/verticalGuidelineEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/verticalGuidelineMid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.6" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontalGuidelineNearBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.9" />
+
+        <!-- Profile Card with Name and Email -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/profile_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:foreground="@drawable/profile_card_border"
+            app:cardBackgroundColor="#ebebeb"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toStartOf="@id/verticalGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/verticalGuidelineStart"
+            app:layout_constraintTop_toTopOf="@id/horizontalGuidelineTop">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/instructorName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Instructor Name"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/instructorEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Email"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/instructorName" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Circle Profile Image -->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/user_icn"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="2dp"
+            app:layout_constraintBottom_toBottomOf="@id/profile_card"
+            app:layout_constraintEnd_toStartOf="@id/verticalGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/verticalGuidelineMid"
+            app:layout_constraintTop_toTopOf="@id/horizontalGuidelineTop"
+            android:elevation="0dp"/>
+
+        <!-- Assigned Courses Card (same width constraints as profile_card) -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/coursesCard"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="75dp"
+            android:layout_marginBottom="75dp"
+            android:foreground="@drawable/profile_card_border"
+            app:cardBackgroundColor="#ebebeb"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/horizontalGuidelineBottom"
+            app:layout_constraintEnd_toStartOf="@id/verticalGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/verticalGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@id/profile_card">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/iconCourses"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/courses_icn"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textCourses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Assigned Courses"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/iconCourses"
+                    app:layout_constraintTop_toTopOf="@id/iconCourses" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/assignedCoursesRecyclerView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textCourses" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Logout Button -->
+        <Button
+            android:id="@+id/logoutbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Log out"
+            android:textSize="16sp"
+            app:backgroundTint="#E40505"
+            app:icon="@drawable/icn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/verticalGuidelineEnd"
+            app:layout_constraintStart_toStartOf="@id/verticalGuidelineStart"
+            app:layout_constraintTop_toBottomOf="@+id/coursesCard" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

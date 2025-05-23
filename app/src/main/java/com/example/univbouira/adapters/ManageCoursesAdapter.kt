@@ -8,9 +8,9 @@ import com.example.univbouira.models.UploadedFile
 
 class ManageCoursesAdapter(
     private val onDeleteClick: (UploadedFile) -> Unit
-) : RecyclerView.Adapter<ManageCoursesAdapter.CourseMaterialViewHolder>() {
+) : RecyclerView.Adapter<ManageCoursesAdapter.ViewHolder>() {
 
-    private var uploadedFiles: MutableList<UploadedFile> = mutableListOf()
+    private val uploadedFiles = mutableListOf<UploadedFile>()
 
     fun updateData(newFiles: List<UploadedFile>) {
         uploadedFiles.clear()
@@ -18,7 +18,7 @@ class ManageCoursesAdapter(
         notifyDataSetChanged()
     }
 
-    inner class CourseMaterialViewHolder(private val binding: ItemCourseMaterialBinding) :
+    inner class ViewHolder(private val binding: ItemCourseMaterialBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(file: UploadedFile) {
@@ -31,12 +31,16 @@ class ManageCoursesAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseMaterialViewHolder {
-        val binding = ItemCourseMaterialBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CourseMaterialViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemCourseMaterialBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: CourseMaterialViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(uploadedFiles[position])
     }
 

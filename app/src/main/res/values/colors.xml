@@ -16,4 +16,6 @@
     <color name="activeButtonColor">#E2E0E0</color> <!-- White (Active) -->
     <color name="inactiveButtonColor">#007BA7</color> <!-- Blue (Inactive) -->
     <color name="teal_200">#03DAC5</color>
+    <color name="green">#206B26</color>
+
 </resources>

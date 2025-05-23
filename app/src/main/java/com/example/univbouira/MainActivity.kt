@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
         val role = sharedPref.getString("role", "")
 
+        val instructorProfileFragment = InstructorProfileFragment()
         val profileFragment = ProfileFragment()
         val notesFragment = NotesFragment()
         val timetableFragment = TimeTableFragment()
@@ -40,7 +41,13 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.profile -> makeCurrentFragment(profileFragment)
+                R.id.profile -> {
+                    if (role == "instructor") {
+                        makeCurrentFragment(instructorProfileFragment)
+                    } else {
+                        makeCurrentFragment(profileFragment)
+                    }
+                }
                 R.id.notes -> makeCurrentFragment(notesFragment)
                 R.id.timetable -> makeCurrentFragment(timetableFragment)
                 R.id.courses -> {

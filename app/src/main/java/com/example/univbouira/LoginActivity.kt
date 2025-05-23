@@ -52,8 +52,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
-            val userEmail = auth.currentUser?.email ?: return@addOnSuccessListener
+            val currentUser = auth.currentUser
+            val userEmail = currentUser?.email ?: return@addOnSuccessListener
+            val uid = currentUser.uid
 
+            // Check if this is a student
             db.collection("students")
                 .whereEqualTo("email", userEmail)
                 .get()
@@ -61,20 +64,21 @@ class LoginActivity : AppCompatActivity() {
                     if (studentResult.size() == 1 && password.length == 12) {
                         saveLoginState("student", userEmail)
                     } else {
+                        // Check if there's an instructor document with uid as ID
                         db.collection("instructors")
-                            .whereEqualTo("email", userEmail)
+                            .document(uid)
                             .get()
-                            .addOnSuccessListener { instructorResult ->
-                                if (instructorResult.size() == 1) {
+                            .addOnSuccessListener { instructorDoc ->
+                                if (instructorDoc.exists()) {
                                     saveLoginState("instructor", userEmail)
                                 } else {
                                     auth.signOut()
-                                    Toast.makeText(this, "Profile not found or duplicated", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this, "Instructor profile not found for UID", Toast.LENGTH_LONG).show()
                                     resetLoginUI()
                                 }
                             }
                             .addOnFailureListener {
-                                Toast.makeText(this, "Error while checking instructor profile", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Error checking instructor profile", Toast.LENGTH_SHORT).show()
                                 resetLoginUI()
                             }
                     }
@@ -89,6 +93,7 @@ class LoginActivity : AppCompatActivity() {
             resetLoginUI()
         }
     }
+
 
     private fun saveLoginState(role: String, email: String) {
         val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
