@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/cardview_profile_bg"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/instructorName"
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Email"
-                    android:textSize="16sp"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/instructorName" />
 
@@ -129,9 +129,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/coursesCard"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="75dp"
-            android:layout_marginBottom="75dp"
+            android:layout_height="wrap_content"
             android:foreground="@drawable/profile_card_border"
             app:cardBackgroundColor="@color/white"
             app:cardElevation="0dp"
@@ -147,31 +145,116 @@
                 android:padding="16dp">
 
                 <ImageView
-                    android:id="@+id/iconCourses"
+                    android:id="@+id/iconStudent"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/courses_icn"
+                    android:src="@drawable/graduated"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textCourses"
+                    android:id="@+id/textProCardNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Assigned Courses"
+                    android:text="Professional Card Number"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@id/iconCourses"
-                    app:layout_constraintTop_toTopOf="@id/iconCourses" />
+                    app:layout_constraintStart_toEndOf="@id/iconStudent"
+                    app:layout_constraintTop_toTopOf="@id/iconStudent" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/assignedCoursesRecyclerView"
+                <TextView
+                    android:id="@+id/editInstructorStudentNumber"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:hint="Professional Card Number"
+                    android:inputType="none"
+                    android:padding="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/iconStudent"
+                    app:layout_constraintTop_toBottomOf="@id/textProCardNumber" />
+
+                <View
+                    android:id="@+id/divider1"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/green"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textCourses" />
+                    app:layout_constraintTop_toBottomOf="@id/editInstructorStudentNumber" />
+
+                <ImageView
+                    android:id="@+id/iconBirthDate"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/calendar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/divider1" />
+
+                <TextView
+                    android:id="@+id/textInstructorBirthDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Date of Birth"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/iconBirthDate"
+                    app:layout_constraintTop_toTopOf="@id/iconBirthDate" />
+
+                <TextView
+                    android:id="@+id/editInstructorBirthDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:hint="Date of Birth"
+                    android:inputType="none"
+                    android:padding="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/textInstructorBirthDate"
+                    app:layout_constraintTop_toBottomOf="@id/textInstructorBirthDate" />
+
+                <View
+                    android:id="@+id/divider2"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/green"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/editInstructorBirthDate" />
+
+                <ImageView
+                    android:id="@+id/iconBirthPlace"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/location"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/divider2" />
+
+                <TextView
+                    android:id="@+id/textInstructorBirthPlace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Place of Birth"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/iconBirthPlace"
+                    app:layout_constraintTop_toTopOf="@id/iconBirthPlace" />
+
+                <TextView
+                    android:id="@+id/editInstructorBirthPlace"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:hint="Place of Birth"
+                    android:inputType="none"
+                    android:padding="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/textInstructorBirthPlace"
+                    app:layout_constraintTop_toBottomOf="@id/textInstructorBirthPlace" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

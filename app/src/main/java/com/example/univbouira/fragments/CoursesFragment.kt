@@ -242,14 +242,15 @@ class CoursesFragment : Fragment() {
                     val module = doc.toObject(ModuleItem::class.java)
                     if (assignedCodes.contains(module.code)) module else null
                 }
-                showInstructorCoursesBottomSheet(instructor.fullName, list)
+                showInstructorCoursesBottomSheet(instructor.fullName, instructor.email ,list)
             }
     }
 
-    private fun showInstructorCoursesBottomSheet(name: String, list: List<ModuleItem>) {
+    private fun showInstructorCoursesBottomSheet(name: String,email: String, list: List<ModuleItem>) {
         val dialog = BottomSheetDialog(requireContext())
         val sheetBinding = BottomsheetInstructorCoursesBinding.inflate(layoutInflater)
         sheetBinding.instructorTitle.text = "Courses by $name"
+        sheetBinding.instructorEmail.text = "Email: $email"
 
         val adapter = CourseAdapter {}
         adapter.updateModuleList(list)

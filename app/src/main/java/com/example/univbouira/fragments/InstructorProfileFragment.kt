@@ -1,115 +1,92 @@
 package com.example.univbouira.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.univbouira.LoginActivity
-import com.example.univbouira.adapters.ModuleAdapter
+import com.example.univbouira.R
 import com.example.univbouira.databinding.FragmentInstructorProfileBinding
-import com.example.univbouira.models.ModuleItem
-import com.example.univbouira.ui.ManageCoursesActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class InstructorProfileFragment : Fragment() {
 
-    private lateinit var binding: FragmentInstructorProfileBinding
-    private lateinit var auth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var moduleAdapter: ModuleAdapter
-    private var instructorUid: String? = null
-    private var assignedCourses: List<String> = emptyList()
-    private val firebaseAuth = FirebaseAuth.getInstance()
+    private var _binding: FragmentInstructorProfileBinding? = null
+    private val binding get() = _binding!!
+
+    private val auth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentInstructorProfileBinding.inflate(inflater, container, false)
-        auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
-
-        setupRecyclerView()
-        loadInstructorProfile()
-
-        binding.logoutbtn.setOnClickListener {
-            val sharedPreferences = requireContext().getSharedPreferences("StudentPrefs", Context.MODE_PRIVATE)
-            sharedPreferences.edit().clear().apply()
-            firebaseAuth.signOut()
-            startActivity(Intent(requireContext(), LoginActivity::class.java))
-            activity?.finish()
-        }
-
+        _binding = FragmentInstructorProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    private fun setupRecyclerView() {
-        moduleAdapter = ModuleAdapter { selectedModule ->
-            val intent = Intent(requireContext(), ManageCoursesActivity::class.java).apply {
-                putExtra("courseCode", selectedModule.code)
-                putExtra("courseTitle", selectedModule.title)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        loadInstructorData()
+        setupLogout()
+    }
+
+    private fun loadInstructorData() {
+        val user = auth.currentUser ?: return
+        firestore.collection("instructors")
+            .whereEqualTo("email", user.email)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                if (!snapshot.isEmpty) {
+                    val doc = snapshot.documents[0]
+                    val name = doc.getString("fullName") ?: "N/A"
+                    val email = doc.getString("email") ?: "N/A"
+                    val cardNumber = doc.getString("cardNumber") ?: "N/A"
+                    val birthDate = doc.getString("birthDate") ?: "N/A"
+                    val birthPlace = doc.getString("birthPlace") ?: "N/A"
+                    val imageUrl = doc.getString("imageUrl")
+
+                    binding.instructorName.text = name
+                    binding.instructorEmail.text = email
+                    binding.editInstructorStudentNumber.text = cardNumber
+                    binding.editInstructorBirthDate.text = birthDate
+                    binding.editInstructorBirthPlace.text = birthPlace
+
+                    if (!imageUrl.isNullOrEmpty()) {
+                        Glide.with(this)
+                            .load(imageUrl)
+                            .placeholder(R.drawable.user_icn)
+                            .into(binding.profileImage)
+                    }
+
+
+                } else {
+                    Toast.makeText(requireContext(), "Instructor not found", Toast.LENGTH_SHORT).show()
+                }
             }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun setupLogout() {
+        binding.logoutbtn.setOnClickListener {
+            auth.signOut()
+            requireActivity().getSharedPreferences("StudentPrefs", 0).edit().clear().apply()
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
-
-        binding.assignedCoursesRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = moduleAdapter
-        }
     }
 
-    private fun loadInstructorProfile() {
-        instructorUid = auth.currentUser?.uid
-        if (instructorUid.isNullOrEmpty()) return
-
-        firestore.collection("instructors").document(instructorUid!!)
-            .get()
-            .addOnSuccessListener { document ->
-                val fullName = document.getString("fullName") ?: "N/A"
-                val email = document.getString("email") ?: "N/A"
-                assignedCourses = document.get("assignedCourses") as? List<String> ?: emptyList()
-
-                binding.instructorName.text = fullName
-                binding.instructorEmail.text = email
-
-                val imageUrl = document.getString("imageUrl")
-                if (!imageUrl.isNullOrEmpty()) {
-                    Glide.with(this).load(imageUrl).into(binding.profileImage)
-                } else {
-                    binding.profileImage.setImageResource(com.example.univbouira.R.drawable.user_icn)
-                }
-
-                loadAssignedCourses()
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
-
-    private fun loadAssignedCourses() {
-        val levelsToCheck = listOf("L1", "L2", "L3", "M1", "M2")
-        val moduleList = mutableListOf<ModuleItem>()
-
-        for (level in levelsToCheck) {
-            firestore.collection("levels")
-                .document(level)
-                .collection("courses")
-                .get()
-                .addOnSuccessListener { documents ->
-                    for (doc in documents) {
-                        val code = doc.getString("code") ?: continue
-                        val title = doc.getString("title") ?: continue
-
-                        if (assignedCourses.contains(code)) {
-                            moduleList.add(ModuleItem(code = code, title = title))
-                        }
-                    }
-                    moduleAdapter.updateModules(moduleList)
-                }
-        }
-    }
-
 }

@@ -28,10 +28,11 @@ class CourseDetailsActivity : AppCompatActivity() {
             finish(); return
         }
         val courseName = intent.getStringExtra("courseName") ?: ""
-        val professorName = intent.getStringExtra("professorName") ?: ""
+        val professorName = intent.getStringExtra("professor") ?: ""
 
         binding.courseNameText.text = courseName
         binding.professorNameText.text = "By $professorName"
+        binding.professorNameText.visibility= View.GONE
 
         binding.recyclerViewMaterials.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewMaterials.adapter = MaterialAdapter(this, files)
