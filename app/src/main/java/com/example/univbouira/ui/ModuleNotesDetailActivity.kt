@@ -10,45 +10,67 @@ import com.google.firebase.firestore.FirebaseFirestore
 class ModuleNotesDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ModuleNotesDetailBinding
-    private lateinit var moduleName: String
+    private lateinit var moduleCode: String
+    private lateinit var moduleTitle: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ModuleNotesDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        moduleName = intent.getStringExtra("moduleTitle") ?: ""
-        binding.moduleTitle.text = "Module: $moduleName"
+        moduleCode = intent.getStringExtra("moduleCode") ?: ""
+        moduleTitle = intent.getStringExtra("moduleTitle") ?: moduleCode
+        binding.moduleTitle.text = "Module: $moduleTitle"
 
         val sharedPref = getSharedPreferences("StudentPrefs", Context.MODE_PRIVATE)
         val studentNumber = sharedPref.getString("cardId", null)
+        val groupName = sharedPref.getString("groupName", null)
 
-        if (studentNumber != null) {
-            fetchNotesFromFirebase(studentNumber)
-        } else {
-            Toast.makeText(this, "Identifiant étudiant manquant", Toast.LENGTH_SHORT).show()
+        if (studentNumber.isNullOrEmpty() || groupName.isNullOrEmpty()) {
+            Toast.makeText(this, "Données étudiant manquantes", Toast.LENGTH_SHORT).show()
+            finish()
+            return
         }
+
+        fetchNotesFromFirebase(studentNumber, groupName)
 
         binding.backButton.setOnClickListener {
             finish()
         }
     }
 
-    private fun fetchNotesFromFirebase(studentNumber: String) {
-        FirebaseFirestore.getInstance()
-            .collection("notes")
+    private fun fetchNotesFromFirebase(studentNumber: String, groupName: String) {
+        val db = FirebaseFirestore.getInstance()
+        val gradeRef = db.collection("grades")
+            .document(moduleCode)
+            .collection(groupName)
             .document(studentNumber)
-            .get()
+
+        gradeRef.get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    val notes = document.get(moduleName) as? Map<*, *>
-                    val td = notes?.get("td")?.toString()?.toDoubleOrNull()
-                    val tp = notes?.get("tp")?.toString()?.toDoubleOrNull()
-                    val exam = notes?.get("exam")?.toString()?.toDoubleOrNull()
+                    val td = document.getDouble("td")
+                    val tp = document.getDouble("tp")
+                    val exam = document.getDouble("exam")
+
+                    val moyenne = calculateMoyenne(tp, td, exam)
 
                     updateNoteUI(tp, td, exam)
+
+                    if (moyenne != null) {
+                        // 🟢 Save moyenne to Firestore
+                        gradeRef.update("moyenne", moyenne)
+                            .addOnSuccessListener {
+                                // Optional: Log or toast success
+                                // Toast.makeText(this, "Moyenne enregistrée", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "Erreur lors de l'enregistrement de la moyenne", Toast.LENGTH_SHORT).show()
+                            }
+                    }
                 } else {
                     Toast.makeText(this, "Aucune note pour ce module", Toast.LENGTH_SHORT).show()
+                    updateNoteUI(null, null, null)
                 }
             }
             .addOnFailureListener {
@@ -56,17 +78,17 @@ class ModuleNotesDetailActivity : AppCompatActivity() {
             }
     }
 
+
     private fun updateNoteUI(tp: Double?, td: Double?, exam: Double?) {
-        binding.tpNote.text = if (tp != null) "Note TP: $tp" else "Note TP: --"
-        binding.tdNote.text = if (td != null) "Note TD: $td" else "Note TD: --"
-        binding.examNote.text = if (exam != null) "Note Exam: $exam" else "Note Exam: --"
+        binding.tpNote.text = tp?.let { "Note TP: $it" } ?: "Note TP: --"
+        binding.tdNote.text = td?.let { "Note TD: $it" } ?: "Note TD: --"
+        binding.examNote.text = exam?.let { "Note Exam: $it" } ?: "Note Exam: --"
 
-        val validNotes = listOfNotNull(tp, td, exam)
+        val moyenne = calculateMoyenne(tp, td, exam)
 
-        if (validNotes.isNotEmpty()) {
-            val average = validNotes.average()
-            binding.moyenne.text = "Moyenne: %.2f".format(average)
-            binding.status.text = if (average >= 10.0) "Status: Admis" else "Status: Ajourné"
+        if (moyenne != null) {
+            binding.moyenne.text = "Moyenne: %.2f".format(moyenne)
+            binding.status.text = if (moyenne >= 10.0) "Status: Admis" else "Status: Ajourné"
         } else {
             binding.moyenne.text = "Moyenne: --"
             binding.status.text = "Status: En attente"
@@ -74,6 +96,21 @@ class ModuleNotesDetailActivity : AppCompatActivity() {
 
         if (tp == null && td == null && exam == null) {
             Toast.makeText(this, "Aucune note disponible pour ce module.", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun calculateMoyenne(tp: Double?, td: Double?, exam: Double?): Double? {
+        return when {
+            tp != null && td != null && exam != null ->
+                ((tp + td) / 2.0) * 0.4 + exam * 0.6
+            tp != null && exam != null ->
+                tp * 0.4 + exam * 0.6
+            td != null && exam != null ->
+                td * 0.4 + exam * 0.6
+            exam != null -> exam
+            tp != null -> tp
+            td != null -> td
+            else -> null
         }
     }
 }

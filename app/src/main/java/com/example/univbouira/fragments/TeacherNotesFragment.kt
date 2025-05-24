@@ -9,10 +9,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.univbouira.activities.GroupListActivity
 import com.example.univbouira.adapters.ModuleAdapter
 import com.example.univbouira.databinding.FragmentModulesBinding
 import com.example.univbouira.models.ModuleItem
+import com.example.univbouira.ui.GroupListActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 

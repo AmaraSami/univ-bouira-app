@@ -1,37 +1,51 @@
 package com.example.univbouira.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.univbouira.R
-import com.example.univbouira.models.NotesItems
+import com.example.univbouira.models.NotesItem
 
 class NotesAdapter(
-    private val itemList: List<NotesItems>,
-    private val onClick: (NotesItems) -> Unit
-) : RecyclerView.Adapter<NotesAdapter.ModuleViewHolder>() {
+    private val notesList: List<NotesItem>,
+    private val onItemClick: (NotesItem) -> Unit // Add this lambda
+) : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModuleViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item, parent, false)
-        return ModuleViewHolder(view)
+    inner class NotesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val moduleName: TextView = itemView.findViewById(R.id.module_name)
+        private val moyenneText: TextView = itemView.findViewById(R.id.moyenne)
+
+        fun bind(item: NotesItem) {
+            moduleName.text = item.moduleName
+            moyenneText.text = "Moyenne: %.2f".format(item.moyenne)
+
+            moyenneText.setTextColor(
+                when {
+                    item.moyenne > 10 -> Color.GREEN
+                    item.moyenne > 0 -> Color.RED
+                    else -> Color.GRAY
+                }
+            )
+
+            itemView.setOnClickListener {
+                onItemClick(item)
+            }
+        }
     }
 
-    override fun onBindViewHolder(holder: ModuleViewHolder, position: Int) {
-        val item = itemList[position]
-        holder.titleText.text = item.title
-        holder.subtitleText.text = item.subtitle
-        holder.noteText.text = item.note
-
-        holder.itemView.setOnClickListener { onClick(item) }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_notes_moyenne, parent, false)
+        return NotesViewHolder(view)
     }
 
-    override fun getItemCount(): Int = itemList.size
-
-    class ModuleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val titleText: TextView = itemView.findViewById(R.id.module_title_text)
-        val subtitleText: TextView = itemView.findViewById(R.id.module_subtitle_text)
-        val noteText: TextView = itemView.findViewById(R.id.module_note_text)
+    override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
+        holder.bind(notesList[position])
     }
+
+    override fun getItemCount(): Int = notesList.size
 }
+

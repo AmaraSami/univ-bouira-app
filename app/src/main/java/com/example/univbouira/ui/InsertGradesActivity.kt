@@ -1,4 +1,4 @@
-package com.example.univbouira.activities
+package com.example.univbouira.ui
 
 import android.os.Bundle
 import android.view.View

@@ -1,4 +1,4 @@
-package com.example.univbouira.activities
+package com.example.univbouira.ui
 
 import android.content.Intent
 import android.os.Bundle

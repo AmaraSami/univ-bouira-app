@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="4dp"
     android:elevation="10dp"
     app:cardCornerRadius="24dp">
@@ -18,40 +18,43 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:orientation="vertical">
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/module_title_text"
-                tools:text="IHM"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="18sp"
+                tools:text="IHM"
+                android:textStyle="bold"
+                 />
+
+            <TextView
                 android:id="@+id/module_subtitle_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                tools:text="All about UI/UX Design"/>
+                tools:text="All about UI/UX Design" />
         </LinearLayout>
+
         <LinearLayout
+            android:id="@+id/notes_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="end">
 
 
-            <TextView
-                android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/module_note_text"
-                tools:text="13.5"/>
+
+                <TextView
+                    android:id="@+id/module_moyenne"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Moyenne" />
 
         </LinearLayout>
 
     </RelativeLayout>
-
-
-
 </androidx.cardview.widget.CardView>

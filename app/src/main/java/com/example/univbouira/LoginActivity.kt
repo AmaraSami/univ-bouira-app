@@ -62,9 +62,32 @@ class LoginActivity : AppCompatActivity() {
                 .get()
                 .addOnSuccessListener { studentResult ->
                     if (studentResult.size() == 1 && password.length == 12) {
-                        saveLoginState("student", userEmail)
+                        val studentDoc = studentResult.documents[0]
+                        val studentNumber = studentDoc.id
+                        val groupName = studentDoc.getString("group") ?: ""
+
+                        if (groupName.isBlank()) {
+                            auth.signOut()
+                            Toast.makeText(this, "Aucun groupe défini pour cet étudiant", Toast.LENGTH_LONG).show()
+                            resetLoginUI()
+                            return@addOnSuccessListener
+                        }
+
+                        val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)
+                        sharedPref.edit()
+                            .putBoolean("isLoggedIn", true)
+                            .putString("email", userEmail)
+                            .putString("role", "student")
+                            .putString("cardId", studentNumber)
+                            .putString("groupName", groupName)
+                            .apply()
+
+                        Toast.makeText(this, "Connexion étudiant réussie 🎓", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, MainActivity::class.java))
+                        finish()
+
                     } else {
-                        // Check if there's an instructor document with uid as ID
+                        // Instructor fallback
                         db.collection("instructors")
                             .document(uid)
                             .get()
@@ -93,6 +116,7 @@ class LoginActivity : AppCompatActivity() {
             resetLoginUI()
         }
     }
+
 
 
     private fun saveLoginState(role: String, email: String) {
