@@ -31,10 +31,10 @@ class MainActivity : AppCompatActivity() {
         val instructorProfileFragment = InstructorProfileFragment()
         val profileFragment = ProfileFragment()
         val notesFragment = NotesFragment()
-        val teacherNotesFragment = TeacherNotesFragment()
         val timetableFragment = TimeTableFragment()
         val coursesFragment = CoursesFragment()
         val modulesFragment = ModulesFragment()
+        val instructorTimeTableFragment = InstructorTimeTableFragment()
 
         // Redirect based on role
         val defaultFragment = if (role == "student") coursesFragment else modulesFragment
@@ -51,12 +51,20 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.notes ->  {
                     if (role == "instructor") {
-                        makeCurrentFragment(teacherNotesFragment)
+                        makeCurrentFragment(modulesFragment)
                     } else {
                         makeCurrentFragment(notesFragment)
                     }
                 }
-                R.id.timetable -> makeCurrentFragment(timetableFragment)
+                R.id.timetable -> {
+                    if (role == "instructor") {
+                        makeCurrentFragment(instructorTimeTableFragment)
+                    } else {
+                        makeCurrentFragment(timetableFragment)
+                    }
+                }
+
+
                 R.id.courses -> {
                     if (role == "instructor") {
                         makeCurrentFragment(modulesFragment)

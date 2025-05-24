@@ -6,20 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.univbouira.R
-import com.example.univbouira.models.TimeSlot
+import com.example.univbouira.models.StudentSlot
 import java.util.Calendar
 
-
-// TimeTableAdapter.kt
-class TimeTableAdapter(private val context: Context, private val timeSlots: List<TimeSlot>) :
-    RecyclerView.Adapter<TimeTableAdapter.TimeSlotViewHolder>() {
+class TimeTableAdapter(
+    private val context: Context,
+    private val timeSlots: List<StudentSlot>
+) : RecyclerView.Adapter<TimeTableAdapter.TimeSlotViewHolder>() {
 
     inner class TimeSlotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val subjectText: TextView = itemView.findViewById(R.id.subject_text)
-        val roomText: TextView = itemView.findViewById(R.id.room_text)
+        val roomText: TextView    = itemView.findViewById(R.id.room_text)
         val teacherText: TextView = itemView.findViewById(R.id.teacher_text)
     }
 
@@ -31,24 +30,36 @@ class TimeTableAdapter(private val context: Context, private val timeSlots: List
 
     override fun onBindViewHolder(holder: TimeSlotViewHolder, position: Int) {
         val slot = timeSlots[position]
-        holder.subjectText.text = slot.subject
-        holder.roomText.text = slot.room
-        holder.teacherText.text = slot.teacher
 
-        // Highlight if it's the current day
-        val calendar = Calendar.getInstance()
-        val currentDay = calendar.get(Calendar.DAY_OF_WEEK) // 1=Sunday, 2=Monday, ..., 7=Saturday
-        val dayNames = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Sat") // no Friday
-        val currentDayName = dayNames.getOrNull((currentDay - 1).coerceAtMost(5)) // avoid out of bounds
+        // Bind fields matching StudentSlot model
+        holder.subjectText.text = slot.courseCode
+        holder.roomText.text    = slot.room
+        holder.teacherText.text = slot.teacherId
 
-        if (slot.day.equals(currentDayName, ignoreCase = true)) {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.highlight_day))
-        } else {
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT)
+        // Color-code by slot type background
+        when (slot.type.lowercase()) {
+            "cour" -> holder.itemView.setBackgroundResource(R.drawable.cour_cell_background)
+            "td"   -> holder.itemView.setBackgroundResource(R.drawable.td_cell_background)
+            "tp"   -> holder.itemView.setBackgroundResource(R.drawable.tp_cell_background)
+            else    -> holder.itemView.setBackgroundColor(Color.TRANSPARENT)
+        }
+
+        // Highlight today's slots by slot.day
+        val todayName = when (Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+            Calendar.SATURDAY  -> "Saturday"
+            Calendar.SUNDAY    -> "Sunday"
+            Calendar.MONDAY    -> "Monday"
+            Calendar.TUESDAY   -> "Tuesday"
+            Calendar.WEDNESDAY -> "Wednesday"
+            Calendar.THURSDAY  -> "Thursday"
+            else               -> ""
+        }
+        if (slot.day.equals(todayName, ignoreCase = true)) {
+            holder.itemView.setBackgroundColor(
+                context.getColor(R.color.highlight_day)
+            )
         }
     }
 
-
     override fun getItemCount(): Int = timeSlots.size
-
 }

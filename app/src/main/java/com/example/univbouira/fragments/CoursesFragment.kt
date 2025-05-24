@@ -27,7 +27,7 @@ class CoursesFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val db = FirebaseFirestore.getInstance()
-    private val levelId = "L3" // Hardcoded for now, make dynamic later if needed
+    private var studentLevelId: String = "L3" // Default fallback
     private var selectedSemester = 1 // 1 for Semestre 1, 2 for Semestre 2
     private var lastInstructorClickTime = 0L
     private var lastCourseClickTime = 0L
@@ -116,9 +116,18 @@ class CoursesFragment : Fragment() {
             .get()
             .addOnSuccessListener { studentResult ->
                 if (!studentResult.isEmpty) {
-                    val name = studentResult.documents[0].getString("fullName") ?: "Student"
+                    val studentDoc = studentResult.documents[0]
+                    val name = studentDoc.getString("fullName") ?: "Student"
                     binding.welcomeText.text = "Hi, $name 👋"
+
+                    // ✅ Get level dynamically
+                    studentLevelId = studentDoc.getString("level") ?: "L3"
+
+                    // Load instructors and courses now that level is known
+                    loadInstructors()
+                    loadCourses()
                 } else {
+                    // Might be an instructor
                     db.collection("instructors")
                         .whereEqualTo("email", email)
                         .get()
@@ -129,16 +138,24 @@ class CoursesFragment : Fragment() {
                             } else {
                                 binding.welcomeText.text = "Hi 👋"
                             }
+                            // Load default content
+                            loadInstructors()
+                            loadCourses()
                         }
                         .addOnFailureListener {
                             binding.welcomeText.text = "Hi 👋"
+                            loadInstructors()
+                            loadCourses()
                         }
                 }
             }
             .addOnFailureListener {
                 binding.welcomeText.text = "Hi 👋"
+                loadInstructors()
+                loadCourses()
             }
     }
+
 
     private fun loadInstructors() {
         showInstructorLoading(true)
@@ -203,7 +220,7 @@ class CoursesFragment : Fragment() {
         showCourseLoading(true)
 
         db.collection("levels")
-            .document(levelId)
+            .document(studentLevelId)
             .collection("courses")
             .whereEqualTo("semester", selectedSemester)
             .get()
@@ -233,7 +250,7 @@ class CoursesFragment : Fragment() {
         val assignedCodes = instructor.assignedCourses ?: emptyList()
 
         db.collection("levels")
-            .document(levelId)
+            .document(studentLevelId)
             .collection("courses")
             .whereEqualTo("semester", selectedSemester)
             .get()
