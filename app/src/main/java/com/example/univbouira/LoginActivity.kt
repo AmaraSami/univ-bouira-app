@@ -68,7 +68,7 @@ class LoginActivity : AppCompatActivity() {
 
                         if (groupName.isBlank()) {
                             auth.signOut()
-                            Toast.makeText(this, "Aucun groupe défini pour cet étudiant", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this, "No group defined for this student", Toast.LENGTH_LONG).show()
                             resetLoginUI()
                             return@addOnSuccessListener
                         }
@@ -82,7 +82,7 @@ class LoginActivity : AppCompatActivity() {
                             .putString("groupName", groupName)
                             .apply()
 
-                        Toast.makeText(this, "Connexion étudiant réussie 🎓", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Student login successful 🎓", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
 

@@ -27,7 +27,7 @@ class ModuleNotesDetailActivity : AppCompatActivity() {
         val groupName      = sharedPref.getString("groupName", null)
 
         if (studentNumber.isNullOrEmpty() || groupName.isNullOrEmpty()) {
-            Toast.makeText(this, "Données étudiant manquantes", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Missing student data", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -46,7 +46,7 @@ class ModuleNotesDetailActivity : AppCompatActivity() {
         gradeRef.get()
             .addOnSuccessListener { doc ->
                 if (!doc.exists()) {
-                    Toast.makeText(this, "Aucune note pour ce module", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "No grades found for this module", Toast.LENGTH_SHORT).show()
                     updateNoteUI(null, null, null, null)
                     return@addOnSuccessListener
                 }
@@ -60,7 +60,7 @@ class ModuleNotesDetailActivity : AppCompatActivity() {
                 updateNoteUI(tp, td, exam, moyenne)
             }
             .addOnFailureListener {
-                Toast.makeText(this, "Erreur de chargement des notes", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error loading grades", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -82,7 +82,7 @@ class ModuleNotesDetailActivity : AppCompatActivity() {
         }
 
         if (tp==null && td==null && exam==null && moyenne==null) {
-            Toast.makeText(this, "Aucune note disponible pour ce module.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "No grades available for this module.", Toast.LENGTH_LONG).show()
         }
     }
 }
