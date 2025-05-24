@@ -2,6 +2,7 @@ package com.example.univbouira.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ class GroupListActivity : AppCompatActivity() {
 
     private var moduleCode: String? = null
     private var moduleTitle: String? = null
+    private var level: String? = null  // New: level param
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +29,7 @@ class GroupListActivity : AppCompatActivity() {
 
         moduleCode = intent.getStringExtra("moduleCode")
         moduleTitle = intent.getStringExtra("moduleTitle")
+        level = intent.getStringExtra("level") ?: "L3" // Default to L3 if missing
 
         if (moduleCode == null || moduleTitle == null) {
             Toast.makeText(this, "Module information missing", Toast.LENGTH_SHORT).show()
@@ -35,7 +38,7 @@ class GroupListActivity : AppCompatActivity() {
         }
 
         // Display module title below the header
-        binding.moduleTitleText.text = "Groups - $moduleTitle"
+        binding.moduleTitleText.text = "Groups - $moduleTitle ($level)"
 
         setupRecyclerView()
         loadGroups()
@@ -47,6 +50,7 @@ class GroupListActivity : AppCompatActivity() {
                 putExtra("moduleCode", moduleCode)
                 putExtra("moduleTitle", moduleTitle)
                 putExtra("groupName", selectedGroup.groupName)
+                putExtra("level", level)  // Pass level downstream if needed
             }
             startActivity(intent)
         }
@@ -57,17 +61,26 @@ class GroupListActivity : AppCompatActivity() {
 
     private fun loadGroups() {
         showLoading(true)
+        val level = intent.getStringExtra("level") ?: "L3"
+        Log.d("GroupListActivity", "Loading groups for level='$level'")
 
         db.collection("groups")
-            .whereArrayContains("modules", moduleCode!!)
+            .whereEqualTo("level", level)
             .get()
-            .addOnSuccessListener { result ->
-                val groups = result.mapNotNull { doc ->
-                    val name = doc.getString("name")
-                    if (name != null) GroupItem(name) else null
+            .addOnSuccessListener { snapshot ->
+                val groups = snapshot.documents.mapNotNull { doc ->
+                    val id = doc.id.trim()
+                    if (id.isEmpty()) {
+                        Log.w("GroupListActivity", "Skipping blank-ID doc at path=${doc.reference.path}")
+                        null
+                    } else {
+                        Log.d("GroupListActivity", "Adding group id='$id'")
+                        GroupItem(groupName = id)
+                    }
                 }
 
                 showLoading(false)
+                Log.d("GroupListActivity", "Final groups (${groups.size}): ${groups.joinToString { it.groupName }}")
 
                 if (groups.isEmpty()) {
                     binding.groupRecyclerView.visibility = View.GONE
@@ -78,11 +91,14 @@ class GroupListActivity : AppCompatActivity() {
                     binding.emptyGroupMessage.visibility = View.GONE
                 }
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
                 showLoading(false)
+                Log.e("GroupListActivity", "Error loading groups", e)
                 Toast.makeText(this, "Failed to load groups", Toast.LENGTH_SHORT).show()
             }
     }
+
+
 
     private fun showLoading(loading: Boolean) {
         binding.groupLoading.visibility = if (loading) View.VISIBLE else View.GONE

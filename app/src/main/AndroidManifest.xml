@@ -36,16 +36,29 @@
             android:exported="false"/>
 
         <activity
+            android:name=".ui.GroupListActivity"
+            android:exported="false"/>
+
+        <activity
+            android:name=".ui.InsertGradesActivity"
+            android:exported="false"/>
+
+        <activity
+            android:name=".ui.StudentListActivity"
+            android:exported="false"/>
+
+        <activity
             android:name=".ui.ManageCoursesActivity"
             android:exported="false" />
-
 
         <activity
             android:name=".ui.CourseDetailsActivity"
             android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
         <activity
             android:name=".LoginActivity"
             android:exported="true">

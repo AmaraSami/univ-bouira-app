@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.univbouira.adapters.ModuleAdapter
+import com.example.univbouira.adapters.NotesModuleAdapter
 import com.example.univbouira.databinding.FragmentModulesBinding
-import com.example.univbouira.models.ModuleItem
+import com.example.univbouira.models.ModuleWithLevel
 import com.example.univbouira.ui.GroupListActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,9 +21,11 @@ class TeacherNotesFragment : Fragment() {
     private var _binding: FragmentModulesBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var moduleAdapter: ModuleAdapter
+    private lateinit var moduleAdapter: NotesModuleAdapter
     private val db = FirebaseFirestore.getInstance()
     private var selectedSemester = "Semestre 1"
+
+    private val defaultImageUrl = "https://firebasestorage.googleapis.com/v0/b/univbouira-default.appspot.com/o/default_course_image.png?alt=media"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,10 +71,12 @@ class TeacherNotesFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        moduleAdapter = ModuleAdapter { module ->
+        moduleAdapter = NotesModuleAdapter { module ->
             val intent = Intent(requireContext(), GroupListActivity::class.java).apply {
                 putExtra("moduleCode", module.code)
                 putExtra("moduleTitle", module.title)
+                putExtra("level", module.level)
+                putExtra("imageUrl", module.imageUrl)
             }
             startActivity(intent)
         }
@@ -88,7 +92,7 @@ class TeacherNotesFragment : Fragment() {
 
         val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email ?: return
         val selectedSemesterNumber = if (selectedSemester == "Semestre 1") 1 else 2
-        val allLevels = listOf("L1", "L2", "L3")
+        val allLevels = listOf("L1", "L2", "L3", "M1", "M2")
 
         val instructorRef = db.collection("instructors").whereEqualTo("email", currentUserEmail)
 
@@ -102,7 +106,7 @@ class TeacherNotesFragment : Fragment() {
             val instructorDoc = result.documents[0]
             val assignedCourses = instructorDoc.get("assignedCourses") as? List<String> ?: emptyList()
 
-            val matchedModules = mutableListOf<ModuleItem>()
+            val matchedModules = mutableListOf<ModuleWithLevel>()
             var levelsProcessed = 0
 
             allLevels.forEach { level ->
@@ -116,12 +120,15 @@ class TeacherNotesFragment : Fragment() {
                             val code = doc.id
                             val title = doc.getString("title") ?: continue
                             val semester = (doc.get("semester") as? Long)?.toInt() ?: selectedSemesterNumber
+                            val imageUrl = doc.getString("imageUrl") ?: defaultImageUrl
 
                             if (assignedCourses.contains(code)) {
-                                val module = ModuleItem(
+                                val module = ModuleWithLevel(
                                     code = code,
                                     title = title,
-                                    semester = semester
+                                    semester = semester,
+                                    level = level,
+                                    imageUrl = imageUrl
                                 )
                                 matchedModules.add(module)
                             }

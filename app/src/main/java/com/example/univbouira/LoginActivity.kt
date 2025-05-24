@@ -64,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
                     if (studentResult.size() == 1 && password.length == 12) {
                         val studentDoc = studentResult.documents[0]
                         val studentNumber = studentDoc.id
-                        val groupName = studentDoc.getString("group") ?: ""
+                        val groupName = studentDoc.getString("groupName") ?: ""
 
                         if (groupName.isBlank()) {
                             auth.signOut()

@@ -2,6 +2,7 @@ package com.example.univbouira.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +35,9 @@ class StudentListActivity : AppCompatActivity() {
 
         binding.textGroupTitle.text = "Students of $groupName"
 
+        Log.d("StudentListActivity", "Intent extras → moduleCode=$moduleCode, moduleTitle=$moduleTitle, groupName=$groupName")
+
+
         setupRecyclerView()
         loadStudents()
     }
@@ -54,7 +58,8 @@ class StudentListActivity : AppCompatActivity() {
     }
 
     private fun loadStudents() {
-        if (groupName == null) {
+        val grp = groupName
+        if (grp.isNullOrBlank()) {
             Toast.makeText(this, "Group name missing", Toast.LENGTH_SHORT).show()
             return
         }
@@ -62,22 +67,28 @@ class StudentListActivity : AppCompatActivity() {
         showLoading(true)
 
         db.collection("groups")
-            .document(groupName!!)
+            .document(grp)
             .collection("students")
             .get()
             .addOnSuccessListener { result ->
                 students.clear()
-                for (doc in result) {
-                    val student = doc.toObject(Student::class.java)
-                    students.add(student)
-                }
-                adapter.notifyDataSetChanged()
 
+                for (doc in result) {
+                    // Manually extract each field by its exact Firestore key:
+                    val studentId   = doc.getString("id")   ?: doc.id
+                    val studentName = doc.getString("name") ?: doc.getString("fullName")
+                    ?: "Unknown Student"
+
+                    // Construct your model explicitly:
+                    students.add(Student(id = studentId, name = studentName))
+                }
+
+                adapter.notifyDataSetChanged()
                 showLoading(false)
 
                 if (students.isEmpty()) {
-                    binding.studentRecyclerView.visibility = View.GONE
-                    binding.emptyStudentMessage.visibility = View.VISIBLE
+                    binding.studentRecyclerView.visibility   = View.GONE
+                    binding.emptyStudentMessage.visibility   = View.VISIBLE
                 } else {
                     binding.studentRecyclerView.visibility = View.VISIBLE
                     binding.emptyStudentMessage.visibility = View.GONE
@@ -88,6 +99,7 @@ class StudentListActivity : AppCompatActivity() {
                 Toast.makeText(this, "Failed to load students", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     private fun showLoading(loading: Boolean) {
         binding.studentLoading.visibility = if (loading) View.VISIBLE else View.GONE

@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         val instructorProfileFragment = InstructorProfileFragment()
         val profileFragment = ProfileFragment()
         val notesFragment = NotesFragment()
+        val teacherNotesFragment = TeacherNotesFragment()
         val timetableFragment = TimeTableFragment()
         val coursesFragment = CoursesFragment()
         val modulesFragment = ModulesFragment()
@@ -48,7 +49,13 @@ class MainActivity : AppCompatActivity() {
                         makeCurrentFragment(profileFragment)
                     }
                 }
-                R.id.notes -> makeCurrentFragment(notesFragment)
+                R.id.notes ->  {
+                    if (role == "instructor") {
+                        makeCurrentFragment(teacherNotesFragment)
+                    } else {
+                        makeCurrentFragment(notesFragment)
+                    }
+                }
                 R.id.timetable -> makeCurrentFragment(timetableFragment)
                 R.id.courses -> {
                     if (role == "instructor") {

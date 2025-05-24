@@ -24,11 +24,11 @@ class InsertGradesActivity : AppCompatActivity() {
         binding = ActivityInsertGradesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        moduleCode = intent.getStringExtra("moduleCode")
-        moduleTitle = intent.getStringExtra("moduleTitle")
-        groupName = intent.getStringExtra("groupName")
-        studentName = intent.getStringExtra("studentName")
-        studentId = intent.getStringExtra("studentId")
+        moduleCode   = intent.getStringExtra("moduleCode")
+        moduleTitle  = intent.getStringExtra("moduleTitle")
+        groupName    = intent.getStringExtra("groupName")
+        studentName  = intent.getStringExtra("studentName")
+        studentId    = intent.getStringExtra("studentId")
 
         setupUI()
         setupListeners()
@@ -48,26 +48,24 @@ class InsertGradesActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle("Confirm Save")
             .setMessage("Are you sure you want to save these grades?")
-            .setPositiveButton("Yes") { _, _ ->
-                saveGrades()
-            }
+            .setPositiveButton("Yes") { _, _ -> saveGrades() }
             .setNegativeButton("Cancel", null)
             .show()
     }
 
     private fun saveGrades() {
-        val gradeTD = binding.editTextGradeTD.text.toString().trim()
-        val gradeTP = binding.editTextGradeTP.text.toString().trim()
-        val gradeExam = binding.editTextGradeExam.text.toString().trim()
+        val tdStr   = binding.editTextGradeTD.text.toString().trim()
+        val tpStr   = binding.editTextGradeTP.text.toString().trim()
+        val examStr = binding.editTextGradeExam.text.toString().trim()
 
-        if (gradeTD.isEmpty() || gradeTP.isEmpty() || gradeExam.isEmpty()) {
+        if (tdStr.isEmpty() || tpStr.isEmpty() || examStr.isEmpty()) {
             Toast.makeText(this, "Please fill all grades", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val tdValue = gradeTD.toDoubleOrNull()
-        val tpValue = gradeTP.toDoubleOrNull()
-        val examValue = gradeExam.toDoubleOrNull()
+        val tdValue   = tdStr.toDoubleOrNull()
+        val tpValue   = tpStr.toDoubleOrNull()
+        val examValue = examStr.toDoubleOrNull()
 
         if (tdValue == null || tpValue == null || examValue == null) {
             Toast.makeText(this, "Please enter valid numeric grades", Toast.LENGTH_SHORT).show()
@@ -79,22 +77,27 @@ class InsertGradesActivity : AppCompatActivity() {
             return
         }
 
-        if (moduleCode == null || groupName == null || studentId == null) {
+        if (moduleCode.isNullOrBlank() || groupName.isNullOrBlank() || studentId.isNullOrBlank()) {
             Toast.makeText(this, "Missing required data", Toast.LENGTH_SHORT).show()
             return
         }
 
+        // Compute the moyenne: TP & TD average weighted 40%, exam weighted 60%
+        val tdTdAverage = (tdValue + tpValue) / 2.0
+        val moyenne = tdTdAverage * 0.4 + examValue * 0.6
+
         toggleLoading(true)
 
         val gradeData = hashMapOf(
-            "TD" to tdValue,
-            "TP" to tpValue,
-            "EXAM" to examValue,
+            "TD"          to tdValue,
+            "TP"          to tpValue,
+            "EXAM"        to examValue,
+            "moyenne"     to moyenne,
             "studentName" to studentName,
-            "studentId" to studentId,
-            "moduleCode" to moduleCode,
-            "groupName" to groupName,
-            "timestamp" to System.currentTimeMillis()
+            "studentId"   to studentId,
+            "moduleCode"  to moduleCode,
+            "groupName"   to groupName,
+            "timestamp"   to System.currentTimeMillis()
         )
 
         val docRef = db.collection("grades")
@@ -105,7 +108,7 @@ class InsertGradesActivity : AppCompatActivity() {
         docRef.set(gradeData)
             .addOnSuccessListener {
                 toggleLoading(false)
-                Toast.makeText(this, "Grades saved successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Grades & moyenne saved successfully", Toast.LENGTH_SHORT).show()
                 finish()
             }
             .addOnFailureListener { e ->
@@ -116,15 +119,12 @@ class InsertGradesActivity : AppCompatActivity() {
 
     private fun toggleLoading(isLoading: Boolean) {
         binding.progressSaving.visibility = if (isLoading) View.VISIBLE else View.GONE
-        binding.buttonSaveGrades.isEnabled = !isLoading
-        binding.buttonSaveGrades.alpha = if (isLoading) 0.5f else 1f
-        // Optional: disable input fields while loading
-        binding.editTextGradeTD.isEnabled = !isLoading
-        binding.editTextGradeTP.isEnabled = !isLoading
-        binding.editTextGradeExam.isEnabled = !isLoading
+        binding.buttonSaveGrades.isEnabled   = !isLoading
+        binding.buttonSaveGrades.alpha       = if (isLoading) 0.5f else 1f
+        binding.editTextGradeTD.isEnabled    = !isLoading
+        binding.editTextGradeTP.isEnabled    = !isLoading
+        binding.editTextGradeExam.isEnabled  = !isLoading
     }
 
-    private fun isValidGrade(value: Double): Boolean {
-        return value in 0.0..20.0
-    }
+    private fun isValidGrade(value: Double): Boolean = value in 0.0..20.0
 }
