@@ -73,7 +73,7 @@ class ProfileFragment : Fragment() {
                 if (!documents.isEmpty) {
                     val doc = documents.documents[0]
                     nameText.text = doc.getString("fullName")
-                    levelText.text = doc.getString("level")
+                    levelText.text = doc.getString("level") + " | " + doc.getString("groupName")
                     specialtyText.text = doc.getString("specialty")
                     studentNumberText.text = doc.getString("studentNumber")
                     birthDateText.text = doc.getString("birthDate")
