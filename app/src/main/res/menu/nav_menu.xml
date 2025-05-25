@@ -14,7 +14,7 @@
 
     <item
         android:id="@+id/timetable"
-        android:title="Time Table"
+        android:title="TimeTable"
         android:icon="@drawable/timetable_icn"/>
 
     <item
