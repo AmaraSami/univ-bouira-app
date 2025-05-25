@@ -76,6 +76,14 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
         fetchStudentInfoAndLoadTimetable()
     }
 
+    private fun updateButtonColors() {
+        val selectedColor = Color.parseColor("#007BA7")
+        val defaultColor = Color.parseColor("#BDBDBD")
+        semester1Button.setBackgroundColor(if (selectedSemester == 1) selectedColor else defaultColor)
+        semester2Button.setBackgroundColor(if (selectedSemester == 2) selectedColor else defaultColor)
+    }
+
+
     private fun fetchStudentInfoAndLoadTimetable() {
         val userEmail = FirebaseAuth.getInstance().currentUser?.email
         if (userEmail.isNullOrEmpty()) {
@@ -107,14 +115,6 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
                 Log.e(TAG, "Error fetching student info", e)
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
-    }
-
-
-    private fun updateButtonColors() {
-        val selectedColor = Color.parseColor("#007BA7")
-        val defaultColor = Color.parseColor("#BDBDBD")
-        semester1Button.setBackgroundColor(if (selectedSemester == 1) selectedColor else defaultColor)
-        semester2Button.setBackgroundColor(if (selectedSemester == 2) selectedColor else defaultColor)
     }
 
     private fun loadTimeTableData() {

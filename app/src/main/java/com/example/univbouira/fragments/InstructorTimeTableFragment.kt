@@ -78,25 +78,41 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
     private fun loadTimeTableData() {
         val currentUser = auth.currentUser ?: return
         val instructorId = currentUser.uid
-        val sem = "Semester $selectedSemester"
+
+        val sem = "Semester $selectedSemester" // should match format in Firestore, like "S1" or "S2"
 
         timeSlots.clear()
         tableLayout.removeAllViews()
 
         db.collection("instructorTimetables")
-            .document(sem)
-            .collection("instructors")
             .document(instructorId)
             .collection("timeSlots")
             .get()
             .addOnSuccessListener { snapshot ->
                 for (doc in snapshot.documents) {
+                    val semester = doc.getString("semester") ?: continue
+                    if (semester != sem) continue // Filter by semester
+
                     val day = doc.getString("day") ?: continue
                     val time = doc.getString("time") ?: continue
-                    val course = doc.getString("courseCode") ?: ""
+                    val courseCode = doc.id // or doc.getString("courseCode") ?: doc.id
                     val room = doc.getString("room") ?: ""
                     val type = doc.getString("type") ?: ""
-                    timeSlots.add(InstructorSlot(day, time, course, room, type))
+                    val levels = doc.get("levels") as? List<String> ?: listOf()
+                    val groups = doc.get("groups") as? List<String> ?: listOf()
+
+                    timeSlots.add(
+                        InstructorSlot(
+                            semester = semester,
+                            day = day,
+                            time = time,
+                            courseCode = courseCode,
+                            room = room,
+                            type = type,
+                            levels = levels,
+                            groups = groups
+                        )
+                    )
                 }
 
                 if (timeSlots.isEmpty()) {
@@ -114,6 +130,7 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
                 Toast.makeText(requireContext(), "Failed to load: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
+
 
     private fun buildTable() {
         val scale = resources.displayMetrics.density
@@ -157,18 +174,30 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
                     gravity = Gravity.CENTER
                     minHeight = minHeightPx
                     textSize = 12f
-                    maxLines = 4
+                    maxLines = 5
                     ellipsize = TextUtils.TruncateAt.END
                     layoutParams = TableRow.LayoutParams(cellWidthPx, TableRow.LayoutParams.MATCH_PARENT)
 
                     val slot = timeSlots.find { it.day == day && it.time == time }
                     if (slot != null) {
-                        text = "${slot.type}\n${slot.courseCode}\n${slot.room}"
+                        val levelText = slot.levels.joinToString(", ") { it.uppercase() }
+                        val groupText = slot.groups.joinToString(", ") { it.uppercase().replace("GROUPE", "GROUPE") }
+                        val levelGroup = when {
+                            levelText.isNotBlank() && groupText.isNotBlank() -> "$levelText | $groupText"
+                            levelText.isNotBlank() -> levelText
+                            groupText.isNotBlank() -> groupText
+                            else -> ""
+                        }
+
+                        text = "${slot.type}\n${slot.courseCode}\n${slot.room}\n$levelGroup"
+
+
                         when (slot.type.lowercase()) {
                             "cour" -> setBackgroundResource(R.drawable.cour_cell_background)
                             "td" -> setBackgroundResource(R.drawable.td_cell_background)
                             "tp" -> setBackgroundResource(R.drawable.tp_cell_background)
                         }
+
                         if (day.equals(todayName, true)) {
                             ValueAnimator.ofObject(
                                 ArgbEvaluator(),
@@ -190,4 +219,5 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
             tableLayout.addView(row)
         }
     }
+
 }

@@ -162,9 +162,10 @@ class CoursesFragment : Fragment() {
 
         val semesterNumber = if (selectedSemester == 1) 1 else 2
 
+
         // Step 1: Load course codes for the selected semester
         db.collection("levels")
-            .document("L3")
+            .document(studentLevelId)
             .collection("courses")
             .whereEqualTo("semester", semesterNumber)
             .get()

@@ -91,7 +91,7 @@ class ModulesFragment : Fragment() {
 
         val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email ?: return
         val selectedSemesterNumber = if (selectedSemester == "Semestre 1") 1 else 2
-        val allLevels = listOf("L1", "L2", "L3")
+        val allLevels = listOf("L1", "L2", "L3" , "M1" , "M2")
 
         db.collection("instructors")
             .whereEqualTo("email", currentUserEmail)

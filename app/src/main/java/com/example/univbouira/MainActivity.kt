@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         val coursesFragment = CoursesFragment()
         val modulesFragment = ModulesFragment()
         val instructorTimeTableFragment = InstructorTimeTableFragment()
+        val teacherNotesFragment = TeacherNotesFragment()
 
         // Redirect based on role
         val defaultFragment = if (role == "student") coursesFragment else modulesFragment
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.notes ->  {
                     if (role == "instructor") {
-                        makeCurrentFragment(modulesFragment)
+                        makeCurrentFragment(teacherNotesFragment)
                     } else {
                         makeCurrentFragment(notesFragment)
                     }
