@@ -15,16 +15,22 @@
         android:layout_height="match_parent">
 
 
-        <ImageView
-            android:id="@+id/txtlogo"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/univ_txt_logo"
-            android:contentDescription="University Logo"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="2dp" />
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:elevation="0dp"
+            android:outlineProvider="none"
+            >
+
+            <include
+                android:id="@+id/header"
+                layout="@layout/custom_header"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </LinearLayout>
 
 
         <androidx.constraintlayout.widget.Guideline
