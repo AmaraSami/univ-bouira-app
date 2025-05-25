@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.univbouira.databinding.ActivityInsertGradesBinding
+import com.example.univbouira.models.GroupItem
 import com.google.firebase.firestore.FirebaseFirestore
 
 class InsertGradesActivity : AppCompatActivity() {
@@ -15,7 +16,7 @@ class InsertGradesActivity : AppCompatActivity() {
 
     private var moduleCode: String? = null
     private var moduleTitle: String? = null
-    private var groupName: String? = null
+    private var groupName: String? = null // Will be in format "L3_GROUPE_01"
     private var studentName: String? = null
     private var studentId: String? = null
 
@@ -24,18 +25,25 @@ class InsertGradesActivity : AppCompatActivity() {
         binding = ActivityInsertGradesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        moduleCode   = intent.getStringExtra("moduleCode")
-        moduleTitle  = intent.getStringExtra("moduleTitle")
-        groupName    = intent.getStringExtra("groupName")
-        studentName  = intent.getStringExtra("studentName")
-        studentId    = intent.getStringExtra("studentId")
+        moduleCode = intent.getStringExtra("moduleCode")
+        moduleTitle = intent.getStringExtra("moduleTitle")
+        groupName = intent.getStringExtra("groupName") // Receives "L3_GROUPE_01" format
+        studentName = intent.getStringExtra("studentName")
+        studentId = intent.getStringExtra("studentId")
 
         setupUI()
         setupListeners()
     }
 
     private fun setupUI() {
-        binding.textInsertGradesTitle.text = "Grades for $studentName"
+        // Extract display name from group ID for better UI
+        val displayGroupName = if (groupName != null) {
+            GroupItem.fromDocumentId(groupName!!).groupName
+        } else {
+            "Unknown Group"
+        }
+
+        binding.textInsertGradesTitle.text = "Grades for $studentName ($displayGroupName)"
     }
 
     private fun setupListeners() {
@@ -54,8 +62,8 @@ class InsertGradesActivity : AppCompatActivity() {
     }
 
     private fun saveGrades() {
-        val tdStr   = binding.editTextGradeTD.text.toString().trim()
-        val tpStr   = binding.editTextGradeTP.text.toString().trim()
+        val tdStr = binding.editTextGradeTD.text.toString().trim()
+        val tpStr = binding.editTextGradeTP.text.toString().trim()
         val examStr = binding.editTextGradeExam.text.toString().trim()
 
         if (tdStr.isEmpty() || tpStr.isEmpty() || examStr.isEmpty()) {
@@ -63,8 +71,8 @@ class InsertGradesActivity : AppCompatActivity() {
             return
         }
 
-        val tdValue   = tdStr.toDoubleOrNull()
-        val tpValue   = tpStr.toDoubleOrNull()
+        val tdValue = tdStr.toDoubleOrNull()
+        val tpValue = tpStr.toDoubleOrNull()
         val examValue = examStr.toDoubleOrNull()
 
         if (tdValue == null || tpValue == null || examValue == null) {
@@ -89,20 +97,20 @@ class InsertGradesActivity : AppCompatActivity() {
         toggleLoading(true)
 
         val gradeData = hashMapOf(
-            "TD"          to tdValue,
-            "TP"          to tpValue,
-            "EXAM"        to examValue,
-            "moyenne"     to moyenne,
+            "TD" to tdValue,
+            "TP" to tpValue,
+            "EXAM" to examValue,
+            "moyenne" to moyenne,
             "studentName" to studentName,
-            "studentId"   to studentId,
-            "moduleCode"  to moduleCode,
-            "groupName"   to groupName,
-            "timestamp"   to System.currentTimeMillis()
+            "studentId" to studentId,
+            "moduleCode" to moduleCode,
+            "groupName" to groupName, // Store full group ID like "L3_GROUPE_01"
+            "timestamp" to System.currentTimeMillis()
         )
 
         val docRef = db.collection("grades")
             .document(moduleCode!!)
-            .collection(groupName!!)
+            .collection(groupName!!) // Uses format like "L3_GROUPE_01"
             .document(studentId!!)
 
         docRef.set(gradeData)
@@ -119,11 +127,11 @@ class InsertGradesActivity : AppCompatActivity() {
 
     private fun toggleLoading(isLoading: Boolean) {
         binding.progressSaving.visibility = if (isLoading) View.VISIBLE else View.GONE
-        binding.buttonSaveGrades.isEnabled   = !isLoading
-        binding.buttonSaveGrades.alpha       = if (isLoading) 0.5f else 1f
-        binding.editTextGradeTD.isEnabled    = !isLoading
-        binding.editTextGradeTP.isEnabled    = !isLoading
-        binding.editTextGradeExam.isEnabled  = !isLoading
+        binding.buttonSaveGrades.isEnabled = !isLoading
+        binding.buttonSaveGrades.alpha = if (isLoading) 0.5f else 1f
+        binding.editTextGradeTD.isEnabled = !isLoading
+        binding.editTextGradeTP.isEnabled = !isLoading
+        binding.editTextGradeExam.isEnabled = !isLoading
     }
 
     private fun isValidGrade(value: Double): Boolean = value in 0.0..20.0

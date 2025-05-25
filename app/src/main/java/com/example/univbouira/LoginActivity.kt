@@ -64,7 +64,15 @@ class LoginActivity : AppCompatActivity() {
                     if (studentResult.size() == 1 && password.length == 12) {
                         val studentDoc = studentResult.documents[0]
                         val studentNumber = studentDoc.id
-                        val groupName = studentDoc.getString("groupName") ?: ""
+                        var groupName = studentDoc.getString("groupName") ?: ""
+                        val level = studentDoc.getString("level") ?: "L3"
+
+                        // Convert old format to new format if necessary
+                        if (groupName.isNotBlank() && !groupName.contains("_")) {
+                            groupName = "${level}_${groupName.replace(" ", "_")}"
+                            // Update the database with the new format
+                            studentDoc.reference.update("groupName", groupName)
+                        }
 
                         if (groupName.isBlank()) {
                             auth.signOut()
@@ -79,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
                             .putString("email", userEmail)
                             .putString("role", "student")
                             .putString("cardId", studentNumber)
-                            .putString("groupName", groupName)
+                            .putString("groupName", groupName) // Store in new format like "L3_GROUPE_01"
                             .apply()
 
                         Toast.makeText(this, "Student login successful 🎓", Toast.LENGTH_SHORT).show()
@@ -116,8 +124,6 @@ class LoginActivity : AppCompatActivity() {
             resetLoginUI()
         }
     }
-
-
 
     private fun saveLoginState(role: String, email: String) {
         val sharedPref = getSharedPreferences("StudentPrefs", MODE_PRIVATE)

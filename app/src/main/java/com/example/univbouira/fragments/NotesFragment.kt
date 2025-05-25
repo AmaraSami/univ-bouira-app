@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.univbouira.R
 import com.example.univbouira.adapters.NotesAdapter
+import com.example.univbouira.models.GroupItem
 import com.example.univbouira.models.NotesItem
 import com.example.univbouira.ui.ModuleNotesDetailActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -30,7 +31,7 @@ class NotesFragment : Fragment() {
     private val notesList = mutableListOf<NotesItem>()
     private lateinit var notesAdapter: NotesAdapter
 
-    private var selectedSemester: Int = 1 // 1 or 2
+    private var selectedSemester: Int = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,14 +74,16 @@ class NotesFragment : Fragment() {
     }
 
     private fun updateButtonColors() {
-        val selectedColor = Color.parseColor("#007BA7") // Blue
-        val defaultColor = Color.parseColor("#BDBDBD")  // Gray
+        val selectedColor = Color.parseColor("#007BA7")
+        val defaultColor = Color.parseColor("#BDBDBD")
 
         semester1Button.setBackgroundColor(if (selectedSemester == 1) selectedColor else defaultColor)
         semester2Button.setBackgroundColor(if (selectedSemester == 2) selectedColor else defaultColor)
     }
 
     private fun loadCoursesAndGrades() {
+        if (!isAdded) return
+
         progressBar.visibility = View.VISIBLE
         notesList.clear()
         notesAdapter.notifyDataSetChanged()
@@ -90,6 +93,8 @@ class NotesFragment : Fragment() {
 
         db.collection("students").whereEqualTo("email", userEmail).get()
             .addOnSuccessListener { studentDocs ->
+                if (!isAdded) return@addOnSuccessListener
+
                 if (studentDocs.isEmpty) {
                     showEmptyView()
                     return@addOnSuccessListener
@@ -98,7 +103,12 @@ class NotesFragment : Fragment() {
                 val studentDoc = studentDocs.first()
                 val studentId = studentDoc.id
                 val level = studentDoc.getString("level") ?: "L3"
-                val groupName = studentDoc.getString("groupName") ?: "GROUPE 01"
+                var groupName = studentDoc.getString("groupName") ?: "GROUPE 01"
+
+                if (!groupName.contains("_")) {
+                    groupName = "${level}_${groupName.replace(" ", "_")}"
+                    Log.d("NotesFragment", "Converted groupName to new format: $groupName")
+                }
 
                 val sharedPref = requireContext().getSharedPreferences("StudentPrefs", Context.MODE_PRIVATE)
                 sharedPref.edit().apply {
@@ -107,13 +117,14 @@ class NotesFragment : Fragment() {
                     apply()
                 }
 
-
                 val coursesRef = db.collection("levels")
                     .document(level)
                     .collection("courses")
 
                 coursesRef.get()
                     .addOnSuccessListener { coursesSnapshot ->
+                        if (!isAdded) return@addOnSuccessListener
+
                         Log.d("GradesDebug", "Found ${coursesSnapshot.size()} courses")
 
                         if (coursesSnapshot.isEmpty) {
@@ -128,7 +139,6 @@ class NotesFragment : Fragment() {
                             val courseCode = courseDoc.getString("code") ?: continue
                             val semester = courseDoc.getLong("semester")?.toInt() ?: 1
 
-                            // 🟡 Only include courses for the selected semester
                             if (semester != selectedSemester) continue
 
                             val gradeRef = db.collection("grades")
@@ -137,12 +147,18 @@ class NotesFragment : Fragment() {
                                 .document(studentId)
 
                             val task = gradeRef.get().addOnSuccessListener { gradeDoc ->
+                                if (!isAdded) return@addOnSuccessListener
+
                                 if (gradeDoc.exists()) {
                                     val moyenne = gradeDoc.getDouble("moyenne")
                                     Log.d("GradesDebug", "Grade for $courseCode: $moyenne")
 
                                     if (moyenne != null) {
-                                        val noteItem = NotesItem(code = courseCode, moduleName = courseTitle, moyenne = moyenne)
+                                        val noteItem = NotesItem(
+                                            code = courseCode,
+                                            moduleName = courseTitle,
+                                            moyenne = moyenne
+                                        )
                                         notesList.add(noteItem)
                                     } else {
                                         Log.d("GradesDebug", "Moyenne is null for $courseCode")
@@ -155,7 +171,6 @@ class NotesFragment : Fragment() {
                             gradeTasks.add(task)
                         }
 
-                        // 🟢 Wait for all grade fetches to finish
                         if (gradeTasks.isEmpty()) {
                             updateUIAfterLoad()
                             return@addOnSuccessListener
@@ -163,28 +178,30 @@ class NotesFragment : Fragment() {
 
                         com.google.android.gms.tasks.Tasks.whenAllSuccess<Any>(gradeTasks)
                             .addOnSuccessListener {
+                                if (!isAdded) return@addOnSuccessListener
                                 Log.d("GradesDebug", "All grades loaded. Final size: ${notesList.size}")
                                 notesAdapter.notifyDataSetChanged()
                                 updateUIAfterLoad()
                             }
                             .addOnFailureListener {
+                                if (!isAdded) return@addOnFailureListener
                                 Log.e("GradesDebug", "Error loading some grades", it)
                                 showEmptyView()
                             }
                     }
                     .addOnFailureListener {
+                        if (!isAdded) return@addOnFailureListener
                         showEmptyView()
                     }
             }
             .addOnFailureListener {
+                if (!isAdded) return@addOnFailureListener
                 showEmptyView()
             }
     }
 
-
-
-
     private fun updateUIAfterLoad() {
+        if (!isAdded) return
         progressBar.visibility = View.GONE
         if (notesList.isEmpty()) {
             emptyView.visibility = View.VISIBLE
@@ -196,6 +213,7 @@ class NotesFragment : Fragment() {
     }
 
     private fun showEmptyView() {
+        if (!isAdded) return
         progressBar.visibility = View.GONE
         emptyView.visibility = View.VISIBLE
         notesRecyclerView.visibility = View.GONE

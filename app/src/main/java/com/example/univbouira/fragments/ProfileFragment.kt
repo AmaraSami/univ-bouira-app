@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.univbouira.LoginActivity
 import com.example.univbouira.R
+import com.example.univbouira.models.GroupItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import de.hdodenhof.circleimageview.CircleImageView
@@ -70,17 +71,28 @@ class ProfileFragment : Fragment() {
             .whereEqualTo("email", email)
             .get()
             .addOnSuccessListener { documents ->
+                if (!isAdded) return@addOnSuccessListener
+
                 if (!documents.isEmpty) {
                     val doc = documents.documents[0]
+                    val level = doc.getString("level") ?: "L3"
+                    var groupName = doc.getString("groupName") ?: "GROUPE 01"
+
+                    if (!groupName.contains("_")) {
+                        groupName = "${level}_${groupName.replace(" ", "_")}"
+                    }
+
+                    val displayGroupName = GroupItem.fromDocumentId(groupName).groupName
+
                     nameText.text = doc.getString("fullName")
-                    levelText.text = doc.getString("level") + " | " + doc.getString("groupName")
+                    levelText.text = "$level | $displayGroupName"
                     specialtyText.text = doc.getString("specialty")
                     studentNumberText.text = doc.getString("studentNumber")
                     birthDateText.text = doc.getString("birthDate")
                     birthPlaceText.text = doc.getString("birthPlace")
 
                     val profileImageUrl = doc.getString("imageUrl")
-                    if (!profileImageUrl.isNullOrEmpty()) {
+                    if (!profileImageUrl.isNullOrEmpty() && isAdded) {
                         Glide.with(requireContext())
                             .load(profileImageUrl)
                             .placeholder(R.drawable.user_icn)
@@ -88,13 +100,15 @@ class ProfileFragment : Fragment() {
                     }
 
                 } else {
-                    Toast.makeText(requireContext(), "No profile data found.", Toast.LENGTH_SHORT).show()
+                    if (isAdded) {
+                        Toast.makeText(requireContext(), "No profile data found.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                if (isAdded) {
+                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
     }
-
-
 }

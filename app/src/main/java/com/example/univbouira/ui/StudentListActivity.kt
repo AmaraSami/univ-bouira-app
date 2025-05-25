@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.univbouira.adapters.StudentAdapter
 import com.example.univbouira.databinding.ActivityStudentListBinding
+import com.example.univbouira.models.GroupItem
 import com.example.univbouira.models.Student
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -20,7 +21,7 @@ class StudentListActivity : AppCompatActivity() {
 
     private var moduleCode: String? = null
     private var moduleTitle: String? = null
-    private var groupName: String? = null
+    private var groupName: String? = null // This will now be in format "L3_GROUPE_01"
 
     private val students = mutableListOf<Student>()
 
@@ -31,12 +32,18 @@ class StudentListActivity : AppCompatActivity() {
 
         moduleCode = intent.getStringExtra("moduleCode")
         moduleTitle = intent.getStringExtra("moduleTitle")
-        groupName = intent.getStringExtra("groupName")
-
-        binding.textGroupTitle.text = "Students of $groupName"
+        groupName = intent.getStringExtra("groupName") // Now receives "L3_GROUPE_01" format
 
         Log.d("StudentListActivity", "Intent extras → moduleCode=$moduleCode, moduleTitle=$moduleTitle, groupName=$groupName")
 
+        // Display the group name nicely
+        val displayGroupName = if (groupName != null) {
+            GroupItem.fromDocumentId(groupName!!).groupName // Extract "GROUPE 01" from "L3_GROUPE_01"
+        } else {
+            "Unknown Group"
+        }
+
+        binding.textGroupTitle.text = "Students of $displayGroupName"
 
         setupRecyclerView()
         loadStudents()
@@ -47,9 +54,9 @@ class StudentListActivity : AppCompatActivity() {
             val intent = Intent(this, InsertGradesActivity::class.java).apply {
                 putExtra("moduleCode", moduleCode)
                 putExtra("moduleTitle", moduleTitle)
-                putExtra("groupName", groupName)
+                putExtra("groupName", groupName) // Pass full group ID (e.g., "L3_GROUPE_01")
                 putExtra("studentName", selectedStudent.name)
-                putExtra("studentId", selectedStudent.id)  // pass id now
+                putExtra("studentId", selectedStudent.id)
             }
             startActivity(intent)
         }
@@ -67,19 +74,16 @@ class StudentListActivity : AppCompatActivity() {
         showLoading(true)
 
         db.collection("groups")
-            .document(grp)
+            .document(grp) // Now uses full ID like "L3_GROUPE_01"
             .collection("students")
             .get()
             .addOnSuccessListener { result ->
                 students.clear()
 
                 for (doc in result) {
-                    // Manually extract each field by its exact Firestore key:
-                    val studentId   = doc.getString("id")   ?: doc.id
-                    val studentName = doc.getString("name") ?: doc.getString("fullName")
-                    ?: "Unknown Student"
+                    val studentId = doc.getString("id") ?: doc.id
+                    val studentName = doc.getString("name") ?: doc.getString("fullName") ?: "Unknown Student"
 
-                    // Construct your model explicitly:
                     students.add(Student(id = studentId, name = studentName))
                 }
 
@@ -87,8 +91,8 @@ class StudentListActivity : AppCompatActivity() {
                 showLoading(false)
 
                 if (students.isEmpty()) {
-                    binding.studentRecyclerView.visibility   = View.GONE
-                    binding.emptyStudentMessage.visibility   = View.VISIBLE
+                    binding.studentRecyclerView.visibility = View.GONE
+                    binding.emptyStudentMessage.visibility = View.VISIBLE
                 } else {
                     binding.studentRecyclerView.visibility = View.VISIBLE
                     binding.emptyStudentMessage.visibility = View.GONE
@@ -99,7 +103,6 @@ class StudentListActivity : AppCompatActivity() {
                 Toast.makeText(this, "Failed to load students", Toast.LENGTH_SHORT).show()
             }
     }
-
 
     private fun showLoading(loading: Boolean) {
         binding.studentLoading.visibility = if (loading) View.VISIBLE else View.GONE

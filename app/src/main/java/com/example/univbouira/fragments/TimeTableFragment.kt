@@ -21,7 +21,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
 import com.google.firebase.auth.FirebaseAuth
 
-
 class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
     private lateinit var tableLayout: TableLayout
     private lateinit var emptyView: TextView
@@ -32,14 +31,12 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
     private var selectedSemester = 1
 
     private val days = listOf("Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday")
-    private val times =
-        listOf("08:00-09:30", "09:30-11:00", "11:00-12:30", "12:30-14:00", "14:00-15:30")
+    private val times = listOf("08:00-09:30", "09:30-11:00", "11:00-12:30", "12:30-14:00", "14:00-15:30")
 
     private val db = FirebaseFirestore.getInstance()
 
     private var studentLevel: String? = null
     private var studentGroup: String? = null
-
 
     companion object {
         private const val TAG = "TimeTableFragment"
@@ -83,11 +80,12 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
         semester2Button.setBackgroundColor(if (selectedSemester == 2) selectedColor else defaultColor)
     }
 
-
     private fun fetchStudentInfoAndLoadTimetable() {
         val userEmail = FirebaseAuth.getInstance().currentUser?.email
         if (userEmail.isNullOrEmpty()) {
-            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            if (isAdded) {
+                Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+            }
             return
         }
 
@@ -95,6 +93,8 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
             .whereEqualTo("email", userEmail)
             .get()
             .addOnSuccessListener { result ->
+                if (!isAdded) return@addOnSuccessListener
+
                 if (result.isEmpty) {
                     Toast.makeText(requireContext(), "Student not found", Toast.LENGTH_SHORT).show()
                     return@addOnSuccessListener
@@ -102,7 +102,14 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
 
                 val studentData = result.documents[0].data
                 studentLevel = studentData?.get("level") as? String
-                studentGroup = studentData?.get("groupName") as? String
+                var groupName = studentData?.get("groupName") as? String
+
+                if (groupName != null && !groupName.contains("_") && studentLevel != null) {
+                    groupName = "${studentLevel}_${groupName.replace(" ", "_")}"
+                    Log.d(TAG, "Converted groupName to new format: $groupName")
+                }
+
+                studentGroup = groupName
 
                 if (studentLevel != null && studentGroup != null) {
                     Log.d(TAG, "Fetched student level=$studentLevel, group=$studentGroup")
@@ -112,6 +119,7 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
                 }
             }
             .addOnFailureListener { e ->
+                if (!isAdded) return@addOnFailureListener
                 Log.e(TAG, "Error fetching student info", e)
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
@@ -119,7 +127,9 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
 
     private fun loadTimeTableData() {
         timeSlots.clear()
-        tableLayout.removeAllViews()
+        if (isAdded) {
+            tableLayout.removeAllViews()
+        }
 
         val sem = "Semester $selectedSemester"
         Log.d(TAG, "Loading timetable for $sem / $studentLevel / $studentGroup")
@@ -134,6 +144,8 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
 
         slotsRef.get()
             .addOnSuccessListener { snap ->
+                if (!isAdded) return@addOnSuccessListener
+
                 val fetchedSlots = mutableListOf<StudentSlot>()
                 val pendingLookups = mutableListOf<Pair<String, Int>>()
 
@@ -164,6 +176,7 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
                     pendingLookups.forEachIndexed { i, (tid, idx) ->
                         db.collection("instructors").document(tid).get()
                             .addOnSuccessListener { doc ->
+                                if (!isAdded) return@addOnSuccessListener
                                 val name = doc.getString("fullName") ?: ""
                                 fetchedSlots[idx] = fetchedSlots[idx].copy(teacherId = name)
                                 lookupsDone[i] = true
@@ -172,6 +185,7 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
                                     renderTable()
                                 }
                             }.addOnFailureListener {
+                                if (!isAdded) return@addOnFailureListener
                                 lookupsDone[i] = true
                                 if (lookupsDone.all { it }) {
                                     timeSlots.addAll(fetchedSlots)
@@ -182,18 +196,19 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
                 }
             }
             .addOnFailureListener { e ->
+                if (!isAdded) return@addOnFailureListener
                 Log.e(TAG, "Error loading timetable", e)
-                Toast.makeText(requireContext(), "Failed to load: ${e.message}", Toast.LENGTH_LONG)
-                    .show()
+                Toast.makeText(requireContext(), "Failed to load: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
 
     private fun renderTable() {
+        if (!isAdded) return
+
         if (timeSlots.isEmpty()) {
             emptyView.visibility = View.VISIBLE
             tableLayout.visibility = View.GONE
-            Toast.makeText(requireContext(), "No timetable data available", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(requireContext(), "No timetable data available", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -230,8 +245,7 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
                 gravity = Gravity.CENTER
                 minHeight = minHeightPx
                 textSize = 12f
-                layoutParams =
-                    TableRow.LayoutParams(cellWidthPx, TableRow.LayoutParams.MATCH_PARENT)
+                layoutParams = TableRow.LayoutParams(cellWidthPx, TableRow.LayoutParams.MATCH_PARENT)
                 setBackgroundResource(R.drawable.cell_border)
             }.also { row.addView(it) }
 
@@ -243,8 +257,7 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
                     textSize = 12f
                     maxLines = 4
                     ellipsize = TextUtils.TruncateAt.END
-                    layoutParams =
-                        TableRow.LayoutParams(cellWidthPx, TableRow.LayoutParams.MATCH_PARENT)
+                    layoutParams = TableRow.LayoutParams(cellWidthPx, TableRow.LayoutParams.MATCH_PARENT)
 
                     val slot = timeSlots.find { it.day == day && it.time == time }
                     if (slot != null) {

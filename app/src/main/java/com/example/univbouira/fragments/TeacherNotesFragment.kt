@@ -59,6 +59,7 @@ class TeacherNotesFragment : Fragment() {
     }
 
     private fun updateButtonColors() {
+        if (_binding == null) return
         val selectedColor = Color.parseColor("#007BA7")
         val defaultColor = Color.parseColor("#BDBDBD")
 
@@ -97,6 +98,8 @@ class TeacherNotesFragment : Fragment() {
         val instructorRef = db.collection("instructors").whereEqualTo("email", currentUserEmail)
 
         instructorRef.get().addOnSuccessListener { result ->
+            if (_binding == null) return@addOnSuccessListener
+
             if (result.isEmpty) {
                 Toast.makeText(requireContext(), "Instructor not found", Toast.LENGTH_SHORT).show()
                 showModuleLoading(false)
@@ -116,6 +119,8 @@ class TeacherNotesFragment : Fragment() {
                     .whereEqualTo("semester", selectedSemesterNumber)
                     .get()
                     .addOnSuccessListener { courses ->
+                        if (_binding == null) return@addOnSuccessListener
+
                         for (doc in courses) {
                             val code = doc.id
                             val title = doc.getString("title") ?: continue
@@ -136,6 +141,7 @@ class TeacherNotesFragment : Fragment() {
 
                         levelsProcessed++
                         if (levelsProcessed == allLevels.size) {
+                            if (_binding == null) return@addOnSuccessListener
                             showModuleLoading(false)
                             if (matchedModules.isEmpty()) {
                                 binding.recyclerViewModules.visibility = View.GONE
@@ -148,18 +154,21 @@ class TeacherNotesFragment : Fragment() {
                         }
                     }
                     .addOnFailureListener {
+                        if (_binding == null) return@addOnFailureListener
                         showModuleLoading(false)
                         Toast.makeText(requireContext(), "Failed loading $level modules", Toast.LENGTH_SHORT).show()
                     }
             }
 
         }.addOnFailureListener {
+            if (_binding == null) return@addOnFailureListener
             showModuleLoading(false)
             Toast.makeText(requireContext(), "Error fetching instructor data", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun showModuleLoading(loading: Boolean) {
+        if (_binding == null) return
         binding.moduleLoading.visibility = if (loading) View.VISIBLE else View.GONE
     }
 

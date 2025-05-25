@@ -59,6 +59,7 @@ class ModulesFragment : Fragment() {
     }
 
     private fun updateButtonColors() {
+        if (_binding == null) return
         val selectedColor = Color.parseColor("#007BA7")
         val defaultColor = Color.parseColor("#BDBDBD")
 
@@ -72,7 +73,6 @@ class ModulesFragment : Fragment() {
 
     private fun setupRecyclerView() {
         moduleAdapter = ModuleAdapter { module ->
-            // Correctly start the activity
             val intent = Intent(requireContext(), ManageCoursesActivity::class.java).apply {
                 putExtra("courseCode", module.code)
                 putExtra("courseTitle", module.title)
@@ -97,6 +97,8 @@ class ModulesFragment : Fragment() {
             .whereEqualTo("email", currentUserEmail)
             .get()
             .addOnSuccessListener { result ->
+                if (_binding == null) return@addOnSuccessListener
+
                 if (result.isEmpty) {
                     Toast.makeText(requireContext(), "Instructor not found", Toast.LENGTH_SHORT).show()
                     showModuleLoading(false)
@@ -116,6 +118,8 @@ class ModulesFragment : Fragment() {
                         .whereEqualTo("semester", selectedSemesterNumber)
                         .get()
                         .addOnSuccessListener { courses ->
+                            if (_binding == null) return@addOnSuccessListener
+
                             for (doc in courses) {
                                 val code = doc.id
                                 val title = doc.getString("title") ?: continue
@@ -128,6 +132,7 @@ class ModulesFragment : Fragment() {
 
                             levelsProcessed++
                             if (levelsProcessed == allLevels.size) {
+                                if (_binding == null) return@addOnSuccessListener
                                 showModuleLoading(false)
                                 if (matchedModules.isEmpty()) {
                                     binding.recyclerViewModules.visibility = View.GONE
@@ -140,6 +145,7 @@ class ModulesFragment : Fragment() {
                             }
                         }
                         .addOnFailureListener {
+                            if (_binding == null) return@addOnFailureListener
                             levelsProcessed++
                             if (levelsProcessed == allLevels.size) showModuleLoading(false)
                             Toast.makeText(requireContext(), "Failed loading $level modules", Toast.LENGTH_SHORT).show()
@@ -147,12 +153,14 @@ class ModulesFragment : Fragment() {
                 }
             }
             .addOnFailureListener {
+                if (_binding == null) return@addOnFailureListener
                 showModuleLoading(false)
                 Toast.makeText(requireContext(), "Error fetching instructor data", Toast.LENGTH_SHORT).show()
             }
     }
 
     private fun showModuleLoading(loading: Boolean) {
+        if (_binding == null) return
         binding.moduleLoading.visibility = if (loading) View.VISIBLE else View.GONE
     }
 

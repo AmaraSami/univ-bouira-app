@@ -24,6 +24,7 @@ class GroupListAdapter(
         private val groupNameText: TextView = itemView.findViewById(R.id.groupNameText)
 
         fun bind(group: GroupItem, isSelected: Boolean) {
+            // Display only the group name without level prefix (e.g., "GROUPE 01")
             groupNameText.text = group.groupName
             itemView.isSelected = isSelected
             itemView.setBackgroundColor(
@@ -47,7 +48,7 @@ class GroupListAdapter(
         holder.bind(group, isSelected)
 
         holder.itemView.setOnClickListener {
-            Log.d(TAG, "Clicked group[${position}]: '${group.groupName}'")
+            Log.d(TAG, "Clicked group[${position}]: '${group.groupName}' (ID: ${group.groupId})")
 
             // Update selection
             val previous = selectedPosition
@@ -67,7 +68,7 @@ class GroupListAdapter(
     fun updateGroups(newGroups: List<GroupItem>) {
         groups = newGroups
         selectedPosition = RecyclerView.NO_POSITION
-        Log.d(TAG, "Adapter now has ${groups.size} groups: ${groups.joinToString { it.groupName }}")
+        Log.d(TAG, "Adapter now has ${groups.size} groups: ${groups.joinToString { "${it.groupName} (${it.groupId})" }}")
         notifyDataSetChanged()
     }
 }

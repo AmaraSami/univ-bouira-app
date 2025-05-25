@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.univbouira.R
+import com.example.univbouira.models.GroupItem
 import com.example.univbouira.models.InstructorSlot
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -79,23 +80,32 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
         val currentUser = auth.currentUser ?: return
         val instructorId = currentUser.uid
 
-        val sem = "Semester $selectedSemester" // should match format in Firestore, like "S1" or "S2"
+        val sem = "Semester $selectedSemester"
 
         timeSlots.clear()
-        tableLayout.removeAllViews()
+        if (isAdded) {
+            tableLayout.removeAllViews()
+        }
+
+        Log.d(TAG, "Looking for instructor: $instructorId, semester: $sem")
 
         db.collection("instructorTimetables")
             .document(instructorId)
             .collection("timeSlots")
             .get()
             .addOnSuccessListener { snapshot ->
+                if (!isAdded) return@addOnSuccessListener
+
+                Log.d(TAG, "Found ${snapshot.size()} total timeslot documents")
+
                 for (doc in snapshot.documents) {
                     val semester = doc.getString("semester") ?: continue
-                    if (semester != sem) continue // Filter by semester
+                    Log.d(TAG, "Document ${doc.id}: semester='$semester', looking for '$sem'")
+                    if (semester != sem) continue
 
                     val day = doc.getString("day") ?: continue
                     val time = doc.getString("time") ?: continue
-                    val courseCode = doc.id // or doc.getString("courseCode") ?: doc.id
+                    val courseCode = doc.id
                     val room = doc.getString("room") ?: ""
                     val type = doc.getString("type") ?: ""
                     val levels = doc.get("levels") as? List<String> ?: listOf()
@@ -126,13 +136,15 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
                 }
             }
             .addOnFailureListener { e ->
+                if (!isAdded) return@addOnFailureListener
                 Log.e(TAG, "Error loading timetable", e)
                 Toast.makeText(requireContext(), "Failed to load: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
 
-
     private fun buildTable() {
+        if (!isAdded) return
+
         val scale = resources.displayMetrics.density
         val cellWidthPx = (120 * scale).toInt()
         val paddingPx = (4 * scale).toInt()
@@ -157,7 +169,6 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
                 setShowDividers(LinearLayout.SHOW_DIVIDER_NONE)
             }
 
-            // Time cell
             TextView(requireContext()).apply {
                 text = time
                 setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
@@ -181,16 +192,23 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
                     val slot = timeSlots.find { it.day == day && it.time == time }
                     if (slot != null) {
                         val levelText = slot.levels.joinToString(", ") { it.uppercase() }
-                        val groupText = slot.groups.joinToString(", ") { it.uppercase().replace("GROUPE", "GROUPE") }
-                        val levelGroup = when {
+
+                        val groupText = slot.groups.joinToString(", ") { groupId ->
+                            if (groupId.contains("_")) {
+                                GroupItem.fromDocumentId(groupId).groupName
+                            } else {
+                                groupId.uppercase()
+                            }
+                        }
+
+                        val levelGroupInfo = when {
                             levelText.isNotBlank() && groupText.isNotBlank() -> "$levelText | $groupText"
                             levelText.isNotBlank() -> levelText
                             groupText.isNotBlank() -> groupText
                             else -> ""
                         }
 
-                        text = "${slot.type}\n${slot.courseCode}\n${slot.room}\n$levelGroup"
-
+                        text = "${slot.type}\n${slot.courseCode}\n${slot.room}\n$levelGroupInfo"
 
                         when (slot.type.lowercase()) {
                             "cour" -> setBackgroundResource(R.drawable.cour_cell_background)
@@ -219,5 +237,4 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
             tableLayout.addView(row)
         }
     }
-
 }

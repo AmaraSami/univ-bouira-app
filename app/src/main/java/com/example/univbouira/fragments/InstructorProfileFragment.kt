@@ -43,6 +43,8 @@ class InstructorProfileFragment : Fragment() {
             .whereEqualTo("email", user.email)
             .get()
             .addOnSuccessListener { snapshot ->
+                if (_binding == null) return@addOnSuccessListener
+
                 if (!snapshot.isEmpty) {
                     val doc = snapshot.documents[0]
                     val name = doc.getString("fullName") ?: "N/A"
@@ -58,19 +60,21 @@ class InstructorProfileFragment : Fragment() {
                     binding.editInstructorBirthDate.text = birthDate
                     binding.editInstructorBirthPlace.text = birthPlace
 
-                    if (!imageUrl.isNullOrEmpty()) {
+                    if (!imageUrl.isNullOrEmpty() && isAdded) {
                         Glide.with(this)
                             .load(imageUrl)
                             .placeholder(R.drawable.user_icn)
                             .into(binding.profileImage)
                     }
 
-
                 } else {
-                    Toast.makeText(requireContext(), "Instructor not found", Toast.LENGTH_SHORT).show()
+                    if (isAdded) {
+                        Toast.makeText(requireContext(), "Instructor not found", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             .addOnFailureListener {
+                if (_binding == null || !isAdded) return@addOnFailureListener
                 Toast.makeText(requireContext(), "Error: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }

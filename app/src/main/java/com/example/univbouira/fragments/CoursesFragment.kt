@@ -27,8 +27,8 @@ class CoursesFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val db = FirebaseFirestore.getInstance()
-    private var studentLevelId: String = "L3" // Default fallback
-    private var selectedSemester = 1 // 1 for Semestre 1, 2 for Semestre 2
+    private var studentLevelId: String = "L3"
+    private var selectedSemester = 1
     private var lastInstructorClickTime = 0L
     private var lastCourseClickTime = 0L
 
@@ -69,6 +69,7 @@ class CoursesFragment : Fragment() {
     }
 
     private fun updateButtonColors() {
+        if (_binding == null) return
         val selectedColor = Color.parseColor("#007BA7")
         val defaultColor = Color.parseColor("#BDBDBD")
 
@@ -115,34 +116,35 @@ class CoursesFragment : Fragment() {
             .whereEqualTo("email", email)
             .get()
             .addOnSuccessListener { studentResult ->
+                if (_binding == null) return@addOnSuccessListener
+
                 if (!studentResult.isEmpty) {
                     val studentDoc = studentResult.documents[0]
                     val name = studentDoc.getString("fullName") ?: "Student"
                     binding.welcomeText.text = "Hi, $name 👋"
 
-                    // ✅ Get level dynamically
                     studentLevelId = studentDoc.getString("level") ?: "L3"
 
-                    // Load instructors and courses now that level is known
                     loadInstructors()
                     loadCourses()
                 } else {
-                    // Might be an instructor
                     db.collection("instructors")
                         .whereEqualTo("email", email)
                         .get()
                         .addOnSuccessListener { instructorResult ->
+                            if (_binding == null) return@addOnSuccessListener
+
                             if (!instructorResult.isEmpty) {
                                 val name = instructorResult.documents[0].getString("name") ?: "Instructor"
                                 binding.welcomeText.text = "Hi, $name 👋"
                             } else {
                                 binding.welcomeText.text = "Hi 👋"
                             }
-                            // Load default content
                             loadInstructors()
                             loadCourses()
                         }
                         .addOnFailureListener {
+                            if (_binding == null) return@addOnFailureListener
                             binding.welcomeText.text = "Hi 👋"
                             loadInstructors()
                             loadCourses()
@@ -150,26 +152,26 @@ class CoursesFragment : Fragment() {
                 }
             }
             .addOnFailureListener {
+                if (_binding == null) return@addOnFailureListener
                 binding.welcomeText.text = "Hi 👋"
                 loadInstructors()
                 loadCourses()
             }
     }
 
-
     private fun loadInstructors() {
         showInstructorLoading(true)
 
         val semesterNumber = if (selectedSemester == 1) 1 else 2
 
-
-        // Step 1: Load course codes for the selected semester
         db.collection("levels")
             .document(studentLevelId)
             .collection("courses")
             .whereEqualTo("semester", semesterNumber)
             .get()
             .addOnSuccessListener { courseResult ->
+                if (_binding == null) return@addOnSuccessListener
+
                 val courseCodes = courseResult.mapNotNull { it.getString("code") }
 
                 if (courseCodes.isEmpty()) {
@@ -179,10 +181,11 @@ class CoursesFragment : Fragment() {
                     return@addOnSuccessListener
                 }
 
-                // Step 2: Load all instructors and filter by assignedCourses
                 db.collection("instructors")
                     .get()
                     .addOnSuccessListener { instructorResult ->
+                        if (_binding == null) return@addOnSuccessListener
+
                         val instructors = instructorResult.mapNotNull { it.toObject(Instructor::class.java) }
                             .filter { instructor ->
                                 instructor.assignedCourses?.any { it in courseCodes } == true
@@ -200,20 +203,20 @@ class CoursesFragment : Fragment() {
                         }
                     }
                     .addOnFailureListener {
+                        if (_binding == null) return@addOnFailureListener
                         showInstructorLoading(false)
                         Toast.makeText(requireContext(), "Failed to load instructors", Toast.LENGTH_SHORT).show()
                     }
             }
             .addOnFailureListener {
+                if (_binding == null) return@addOnFailureListener
                 showInstructorLoading(false)
                 Toast.makeText(requireContext(), "Failed to load courses", Toast.LENGTH_SHORT).show()
             }
     }
 
-
-
-
     private fun showInstructorLoading(loading: Boolean) {
+        if (_binding == null) return
         binding.instructorLoading.visibility = if (loading) View.VISIBLE else View.GONE
     }
 
@@ -226,6 +229,8 @@ class CoursesFragment : Fragment() {
             .whereEqualTo("semester", selectedSemester)
             .get()
             .addOnSuccessListener { result ->
+                if (_binding == null) return@addOnSuccessListener
+
                 val list = result.map { it.toObject(ModuleItem::class.java) }
                 showCourseLoading(false)
                 if (list.isEmpty()) {
@@ -238,12 +243,14 @@ class CoursesFragment : Fragment() {
                 }
             }
             .addOnFailureListener {
+                if (_binding == null) return@addOnFailureListener
                 showCourseLoading(false)
                 Toast.makeText(requireContext(), "Error loading courses", Toast.LENGTH_SHORT).show()
             }
     }
 
     private fun showCourseLoading(loading: Boolean) {
+        if (_binding == null) return
         binding.courseLoading.visibility = if (loading) View.VISIBLE else View.GONE
     }
 
@@ -256,15 +263,19 @@ class CoursesFragment : Fragment() {
             .whereEqualTo("semester", selectedSemester)
             .get()
             .addOnSuccessListener { result ->
+                if (_binding == null) return@addOnSuccessListener
+
                 val list = result.mapNotNull { doc ->
                     val module = doc.toObject(ModuleItem::class.java)
                     if (assignedCodes.contains(module.code)) module else null
                 }
-                showInstructorCoursesBottomSheet(instructor.fullName, instructor.email ,list)
+                showInstructorCoursesBottomSheet(instructor.fullName, instructor.email, list)
             }
     }
 
-    private fun showInstructorCoursesBottomSheet(name: String,email: String, list: List<ModuleItem>) {
+    private fun showInstructorCoursesBottomSheet(name: String, email: String, list: List<ModuleItem>) {
+        if (_binding == null) return
+
         val dialog = BottomSheetDialog(requireContext())
         val sheetBinding = BottomsheetInstructorCoursesBinding.inflate(layoutInflater)
         sheetBinding.instructorTitle.text = "Courses by $name"
