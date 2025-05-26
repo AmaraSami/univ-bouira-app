@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.univbouira.R
 import com.example.univbouira.models.NotesItem
+import androidx.core.graphics.toColorInt
 
 class NotesAdapter(
     private val notesList: List<NotesItem>,
@@ -24,8 +25,8 @@ class NotesAdapter(
 
             moyenneText.setTextColor(
                 when {
-                    item.moyenne > 10 -> Color.GREEN
-                    item.moyenne > 0 -> Color.RED
+                    item.moyenne > 10 -> "#206B26".toColorInt()
+                    item.moyenne > 0 -> "#880808".toColorInt()
                     else -> Color.GRAY
                 }
             )
