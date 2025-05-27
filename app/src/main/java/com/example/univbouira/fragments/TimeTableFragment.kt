@@ -123,13 +123,16 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
                     studentLevel = studentData?.get("level") as? String
                     var groupName = studentData?.get("groupName") as? String
 
-                    // Handle legacy group format conversion
-                    if (groupName != null && !groupName.contains("_") && studentLevel != null) {
-                        groupName = "${studentLevel}_${groupName.replace(" ", "_")}"
-                        Log.d(TAG, "Converted groupName to new format: $groupName")
+                    // Convert simple format (like "G1") to full format (like "L3_GROUPE_01") if needed
+                    if (groupName != null && studentLevel != null) {
+                        if (!groupName.contains("_GROUPE_") && !groupName.startsWith(studentLevel!!)) {
+                            // Convert simple format like "G1" or "GROUPE 01" to "L3_GROUPE_01"
+                            val groupNumber = groupName.replace(Regex("[^\\d]"), "").padStart(2, '0')
+                            groupName = "${studentLevel}_GROUPE_$groupNumber"
+                            Log.d(TAG, "Converted group name to: $groupName")
+                        }
+                        studentGroup = groupName
                     }
-
-                    studentGroup = groupName
 
                     if (studentLevel != null && studentGroup != null) {
                         Log.d(TAG, "Student loaded: level=$studentLevel, group=$studentGroup")
@@ -166,16 +169,14 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
         val sem = "Semester$selectedSemester"
         Log.d(TAG, "Loading timetable for $sem / $studentLevel / $studentGroup")
 
-        val slotsRef = db.collection("studentTimetables")
+        // Database path: timetables/Semester1/L3/L3_GROUPE_01
+        val timetableRef = db.collection("timetables")
             .document(sem)
-            .collection("levels")
-            .document(studentLevel!!)
-            .collection("groups")
+            .collection(studentLevel!!)
             .document(studentGroup!!)
-            .collection("timeSlots")
 
         // Use real-time listener for live updates
-        timetableListener = slotsRef.addSnapshotListener { snapshot, e ->
+        timetableListener = timetableRef.addSnapshotListener { documentSnapshot, e ->
             if (!isAdded) return@addSnapshotListener
 
             if (e != null) {
@@ -184,44 +185,63 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
                 return@addSnapshotListener
             }
 
-            if (snapshot != null && !snapshot.isEmpty) {
-                processTimetableData(snapshot.documents.mapNotNull { it.data })
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                val data = documentSnapshot.data
+                val slotsMap = data?.get("slots") as? Map<String, Any>
+
+                if (slotsMap != null) {
+                    processTimetableSlots(slotsMap)
+                } else {
+                    Log.d(TAG, "No slots found in document")
+                    timeSlots.clear()
+                    renderTable()
+                }
             } else {
-                Log.d(TAG, "No timetable data found")
+                Log.d(TAG, "No timetable document found for path: timetables/$sem/$studentLevel/$studentGroup")
                 timeSlots.clear()
                 renderTable()
             }
         }
     }
 
-    private fun processTimetableData(documents: List<Map<String, Any>>) {
+    private fun processTimetableSlots(slotsMap: Map<String, Any>) {
         val fetchedSlots = mutableListOf<StudentSlot>()
         val pendingInstructorLookups = mutableListOf<Pair<String, Int>>()
 
-        Log.d(TAG, "Processing ${documents.size} timetable documents")
+        Log.d(TAG, "Processing ${slotsMap.size} time slots")
 
-        documents.forEachIndexed { index, data ->
+        slotsMap.entries.forEachIndexed { index, (timeSlotKey, slotData) ->
             try {
-                val day = data["day"] as? String ?: ""
-                val time = data["time"] as? String ?: ""
-                val courseCode = data["courseCode"] as? String ?: data["subject"] as? String ?: ""
-                val room = data["room"] as? String ?: ""
-                val type = data["type"] as? String ?: ""
-                val teacherId = data["teacherId"] as? String
-                var teacherName = data["teacherName"] as? String ?: ""
+                // Parse the key like "Saturday_08:00-09:30"
+                val parts = timeSlotKey.split("_", limit = 2)
+                if (parts.size < 2) {
+                    Log.w(TAG, "Invalid time slot key format: $timeSlotKey")
+                    return@forEachIndexed
+                }
+
+                val day = parts[0]
+                val time = parts[1]
+
+                val slotMap = slotData as? Map<String, Any> ?: return@forEachIndexed
+
+                val courseCode = slotMap["courseCode"] as? String ?: ""
+                val room = slotMap["room"] as? String ?: ""
+                val type = slotMap["type"] as? String ?: ""
+                val instructorId = slotMap["instructorId"] as? String
+                var teacherName = slotMap["teacherName"] as? String ?: ""
 
                 Log.d(TAG, "Processing slot: day=$day, time=$time, course=$courseCode, room=$room, type=$type")
 
-                // If no teacher name but we have teacher ID, queue for lookup
-                if (teacherName.isEmpty() && !teacherId.isNullOrEmpty()) {
+                // If no teacher name but we have instructor ID, queue for lookup
+                if (teacherName.isEmpty() && !instructorId.isNullOrEmpty()) {
                     fetchedSlots.add(StudentSlot(day, time, courseCode, room, "", type))
-                    pendingInstructorLookups.add(Pair(teacherId, index))
+                    pendingInstructorLookups.add(Pair(instructorId, index))
                 } else {
                     fetchedSlots.add(StudentSlot(day, time, courseCode, room, teacherName, type))
                 }
 
             } catch (e: Exception) {
-                Log.e(TAG, "Error parsing slot data", e)
+                Log.e(TAG, "Error parsing slot data for key: $timeSlotKey", e)
             }
         }
 
@@ -300,6 +320,11 @@ class TimeTableFragment : Fragment(R.layout.fragment_time_table) {
         if (!isAdded) return
 
         Log.d(TAG, "Rendering table with ${timeSlots.size} time slots")
+
+        if (timeSlots.isEmpty()) {
+            showEmptyState("No timetable data available")
+            return
+        }
 
         emptyView.visibility = View.GONE
         tableLayout.visibility = View.VISIBLE

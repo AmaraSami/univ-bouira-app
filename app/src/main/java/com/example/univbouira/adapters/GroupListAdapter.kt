@@ -24,8 +24,7 @@ class GroupListAdapter(
         private val groupNameText: TextView = itemView.findViewById(R.id.groupNameText)
 
         fun bind(group: GroupItem, isSelected: Boolean) {
-            // Use the display name from the new GroupItem structure
-            // This will show "Group 1", "Group 2", etc.
+            // Display the group name (e.g., "Group 1", "Group 2")
             groupNameText.text = group.groupName
 
             itemView.isSelected = isSelected
@@ -50,7 +49,6 @@ class GroupListAdapter(
         holder.bind(group, isSelected)
 
         holder.itemView.setOnClickListener {
-            // Updated logging to use new GroupItem properties
             Log.d(TAG, "Clicked group[${position}]: '${group.groupName}' (DocumentID: ${group.documentId}, Level: ${group.level})")
 
             // Update selection
@@ -72,7 +70,6 @@ class GroupListAdapter(
         groups = newGroups
         selectedPosition = RecyclerView.NO_POSITION
 
-        // Updated logging to use new GroupItem structure
         Log.d(TAG, "Adapter now has ${groups.size} groups: ${
             groups.joinToString { "${it.groupName} (${it.documentId})" }
         }")

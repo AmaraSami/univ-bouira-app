@@ -22,6 +22,10 @@ class GroupListActivity : AppCompatActivity() {
     private var moduleTitle: String? = null
     private var level: String? = null
 
+    companion object {
+        private const val TAG = "GroupListActivity"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGroupListBinding.inflate(layoutInflater)
@@ -48,7 +52,7 @@ class GroupListActivity : AppCompatActivity() {
             val intent = Intent(this, StudentListActivity::class.java).apply {
                 putExtra("moduleCode", moduleCode)
                 putExtra("moduleTitle", moduleTitle)
-                putExtra("groupName", selectedGroup.groupId) // Pass full ID (e.g., "L3_GROUPE_01")
+                putExtra("groupName", selectedGroup.documentId) // Pass full ID (e.g., "L3_GROUPE_01")
                 putExtra("level", level)
             }
             startActivity(intent)
@@ -61,39 +65,42 @@ class GroupListActivity : AppCompatActivity() {
     private fun loadGroups() {
         showLoading(true)
         val currentLevel = level ?: "L3"
-        Log.d("GroupListActivity", "Loading groups for level='$currentLevel'")
+        Log.d(TAG, "Loading groups for level='$currentLevel'")
 
+        // Load groups from the database
+        // Groups are stored as documents in "groups" collection with names like "L3_GROUPE_01"
         db.collection("groups")
             .get()
             .addOnSuccessListener { snapshot ->
                 val groups = snapshot.documents.mapNotNull { doc ->
                     val docId = doc.id.trim()
                     if (docId.isEmpty()) {
-                        Log.w("GroupListActivity", "Skipping blank-ID doc at path=${doc.reference.path}")
+                        Log.w(TAG, "Skipping blank-ID doc at path=${doc.reference.path}")
                         null
                     } else {
-                        Log.d("GroupListActivity", "Processing group with document ID='$docId'")
+                        Log.d(TAG, "Processing group with document ID='$docId'")
 
                         // Create GroupItem from document ID using the companion function
                         val groupItem = GroupItem.fromDocumentId(docId)
 
-                        // Validate that the group belongs to the current level
-                        if (groupItem.level == currentLevel || groupItem.level.isEmpty()) {
-                            Log.d("GroupListActivity", "Adding group: ${groupItem.groupName} (ID: ${groupItem.groupId})")
+                        // Filter groups by level - only include groups that match the current level
+                        if (groupItem.level == currentLevel) {
+                            Log.d(TAG, "Adding group: ${groupItem.groupName} (ID: ${groupItem.documentId})")
                             groupItem
                         } else {
-                            Log.d("GroupListActivity", "Skipping group ${groupItem.groupName} - wrong level (${groupItem.level} != $currentLevel)")
+                            Log.d(TAG, "Skipping group ${groupItem.groupName} - wrong level (${groupItem.level} != $currentLevel)")
                             null
                         }
                     }
-                }
+                }.sortedBy { it.getGroupNumberInt() } // Sort by group number
 
                 showLoading(false)
-                Log.d("GroupListActivity", "Final groups (${groups.size}): ${groups.joinToString { "${it.groupName} (${it.groupId})" }}")
+                Log.d(TAG, "Final groups (${groups.size}): ${groups.joinToString { "${it.groupName} (${it.documentId})" }}")
 
                 if (groups.isEmpty()) {
                     binding.groupRecyclerView.visibility = View.GONE
                     binding.emptyGroupMessage.visibility = View.VISIBLE
+                    binding.emptyGroupMessage.text = "No groups found for $currentLevel"
                 } else {
                     adapter.updateGroups(groups)
                     binding.groupRecyclerView.visibility = View.VISIBLE
@@ -102,8 +109,8 @@ class GroupListActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 showLoading(false)
-                Log.e("GroupListActivity", "Error loading groups", e)
-                Toast.makeText(this, "Failed to load groups", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "Error loading groups", e)
+                Toast.makeText(this, "Failed to load groups: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 

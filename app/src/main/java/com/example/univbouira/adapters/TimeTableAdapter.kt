@@ -41,7 +41,7 @@ class TimeTableAdapter(
             "cour" -> holder.itemView.setBackgroundResource(R.drawable.cour_cell_background)
             "td"   -> holder.itemView.setBackgroundResource(R.drawable.td_cell_background)
             "tp"   -> holder.itemView.setBackgroundResource(R.drawable.tp_cell_background)
-            else    -> holder.itemView.setBackgroundColor(Color.TRANSPARENT)
+            else   -> holder.itemView.setBackgroundColor(Color.TRANSPARENT)
         }
 
         // Highlight today's slots by slot.day
@@ -54,7 +54,9 @@ class TimeTableAdapter(
             Calendar.THURSDAY  -> "Thursday"
             else               -> ""
         }
+
         if (slot.day.equals(todayName, ignoreCase = true)) {
+            // Apply today's highlight with higher priority than type background
             holder.itemView.setBackgroundColor(
                 context.getColor(R.color.highlight_day)
             )

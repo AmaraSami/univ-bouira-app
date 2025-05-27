@@ -68,10 +68,19 @@ class LoginActivity : AppCompatActivity() {
                         val level = studentDoc.getString("level") ?: "L3"
 
                         // Convert old format to new format if necessary
-                        if (groupName.isNotBlank() && !groupName.contains("_")) {
-                            groupName = "${level}_${groupName.replace(" ", "_")}"
+                        if (groupName.isNotBlank() && !groupName.contains("_GROUPE_")) {
+                            // Convert formats like "G1", "GROUPE 01", "Group 1" to "L3_GROUPE_01"
+                            val groupNumber = groupName.replace(Regex("[^\\d]"), "").ifEmpty { "1" }
+                            groupName = "${level}_GROUPE_${groupNumber.padStart(2, '0')}"
+
                             // Update the database with the new format
                             studentDoc.reference.update("groupName", groupName)
+                                .addOnSuccessListener {
+                                    android.util.Log.d("LoginActivity", "Updated group name to: $groupName")
+                                }
+                                .addOnFailureListener { e ->
+                                    android.util.Log.w("LoginActivity", "Failed to update group name", e)
+                                }
                         }
 
                         if (groupName.isBlank()) {
@@ -87,7 +96,8 @@ class LoginActivity : AppCompatActivity() {
                             .putString("email", userEmail)
                             .putString("role", "student")
                             .putString("cardId", studentNumber)
-                            .putString("groupName", groupName) // Store in new format like "L3_GROUPE_01"
+                            .putString("groupName", groupName) // Store in format like "L3_GROUPE_01"
+                            .putString("level", level)
                             .apply()
 
                         Toast.makeText(this, "Student login successful 🎓", Toast.LENGTH_SHORT).show()
