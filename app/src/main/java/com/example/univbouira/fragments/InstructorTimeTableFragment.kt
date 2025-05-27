@@ -80,14 +80,14 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
         val currentUser = auth.currentUser ?: return
         val instructorId = currentUser.uid
 
-        val sem = "Semester $selectedSemester"
+        val sem = "Semester$selectedSemester"
 
         timeSlots.clear()
         if (isAdded) {
             tableLayout.removeAllViews()
         }
 
-        Log.d(TAG, "Looking for instructor: $instructorId, semester: $sem")
+        Log.d(TAG, "🔍 DEBUG: Looking for instructor: $instructorId, semester: $sem")
 
         db.collection("instructorTimetables")
             .document(instructorId)
@@ -96,20 +96,30 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
             .addOnSuccessListener { snapshot ->
                 if (!isAdded) return@addOnSuccessListener
 
-                Log.d(TAG, "Found ${snapshot.size()} total timeslot documents")
+                Log.d(TAG, "🔍 DEBUG: Found ${snapshot.size()} total timeslot documents")
+
+                timeSlots.clear()
 
                 for (doc in snapshot.documents) {
-                    val semester = doc.getString("semester") ?: continue
-                    Log.d(TAG, "Document ${doc.id}: semester='$semester', looking for '$sem'")
-                    if (semester != sem) continue
+                    val data = doc.data ?: continue
+                    val semester = data["semester"] as? String ?: ""
 
-                    val day = doc.getString("day") ?: continue
-                    val time = doc.getString("time") ?: continue
+                    Log.d(TAG, "🔍 DEBUG: Document ${doc.id}: semester='$semester', looking for '$sem'")
+
+                    if (semester != sem) {
+                        Log.d(TAG, "🔍 DEBUG: Skipping document ${doc.id} - wrong semester")
+                        continue
+                    }
+
+                    val day = data["day"] as? String ?: ""
+                    val time = data["time"] as? String ?: ""
                     val courseCode = doc.id
-                    val room = doc.getString("room") ?: ""
-                    val type = doc.getString("type") ?: ""
-                    val levels = doc.get("levels") as? List<String> ?: listOf()
-                    val groups = doc.get("groups") as? List<String> ?: listOf()
+                    val room = data["room"] as? String ?: ""
+                    val type = data["type"] as? String ?: ""
+                    val levels = data["levels"] as? List<String> ?: listOf()
+                    val groups = data["groups"] as? List<String> ?: listOf()
+
+                    Log.d(TAG, "🔍 DEBUG: Adding slot: day='$day', time='$time', course='$courseCode', room='$room', type='$type'")
 
                     timeSlots.add(
                         InstructorSlot(
@@ -124,6 +134,9 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
                         )
                     )
                 }
+
+                Log.d(TAG, "🔍 DEBUG: Final timeSlots count: ${timeSlots.size}")
+                Log.d(TAG, "🔍 DEBUG: Available slots: ${timeSlots.map { "${it.day}_${it.time}" }}")
 
                 if (timeSlots.isEmpty()) {
                     emptyView.visibility = View.VISIBLE
@@ -145,6 +158,9 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
     private fun buildTable() {
         if (!isAdded) return
 
+        // Clear any existing rows
+        tableLayout.removeAllViews()
+
         val scale = resources.displayMetrics.density
         val cellWidthPx = (120 * scale).toInt()
         val paddingPx = (4 * scale).toInt()
@@ -160,6 +176,9 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
             else -> ""
         }
 
+        Log.d(TAG, "🔍 DEBUG: Building table for ${times.size} time slots and ${days.size} days")
+        Log.d(TAG, "🔍 DEBUG: Today is: $todayName")
+
         for (time in times) {
             val row = TableRow(requireContext()).apply {
                 layoutParams = TableLayout.LayoutParams(
@@ -169,6 +188,7 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
                 setShowDividers(LinearLayout.SHOW_DIVIDER_NONE)
             }
 
+            // Time column
             TextView(requireContext()).apply {
                 text = time
                 setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
@@ -179,26 +199,40 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
                 setBackgroundResource(R.drawable.cell_border)
             }.also { row.addView(it) }
 
+            // Day columns
             for (day in days) {
+                val slot = timeSlots.find {
+                    it.day.equals(day, ignoreCase = true) && it.time == time
+                }
+
+                Log.d(TAG, "🔍 DEBUG: Looking for slot $day $time - Found: ${slot != null}")
+                if (slot != null) {
+                    Log.d(TAG, "🔍 DEBUG: Slot details: ${slot.courseCode}, ${slot.room}, ${slot.type}")
+                }
+
                 TextView(requireContext()).apply {
                     setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
                     gravity = Gravity.CENTER
                     minHeight = minHeightPx
-                    textSize = 12f
+                    textSize = 10f
                     maxLines = 5
                     ellipsize = TextUtils.TruncateAt.END
                     layoutParams = TableRow.LayoutParams(cellWidthPx, TableRow.LayoutParams.MATCH_PARENT)
 
-                    val slot = timeSlots.find { it.day == day && it.time == time }
                     if (slot != null) {
                         val levelText = slot.levels.joinToString(", ") { it.uppercase() }
 
-                        val groupText = slot.groups.joinToString(", ") { groupId ->
-                            if (groupId.contains("_")) {
-                                GroupItem.fromDocumentId(groupId).groupName
-                            } else {
-                                groupId.uppercase()
+                        val groupText = try {
+                            slot.groups.joinToString(", ") { groupId ->
+                                if (groupId.contains("_")) {
+                                    GroupItem.fromDocumentId(groupId).getShortName()
+                                } else {
+                                    groupId.uppercase()
+                                }
                             }
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Error formatting groups: ${slot.groups}", e)
+                            slot.groups.joinToString(", ")
                         }
 
                         val levelGroupInfo = when {
@@ -208,12 +242,15 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
                             else -> ""
                         }
 
-                        text = "${slot.type}\n${slot.courseCode}\n${slot.room}\n$levelGroupInfo"
+                        text = "${slot.type.uppercase()}\n${slot.courseCode}\n${slot.room}\n$levelGroupInfo"
+
+                        Log.d(TAG, "🔍 DEBUG: Setting cell text for $day $time: '$text'")
 
                         when (slot.type.lowercase()) {
                             "cour" -> setBackgroundResource(R.drawable.cour_cell_background)
                             "td" -> setBackgroundResource(R.drawable.td_cell_background)
                             "tp" -> setBackgroundResource(R.drawable.tp_cell_background)
+                            else -> setBackgroundResource(R.drawable.cell_border)
                         }
 
                         if (day.equals(todayName, true)) {
@@ -227,14 +264,19 @@ class InstructorTimeTableFragment : Fragment(R.layout.fragment_time_table) {
                                 start()
                             }
                         }
+
+                        Log.d(TAG, "✅ PLACED: $day $time -> ${slot.courseCode}")
                     } else {
                         setBackgroundResource(R.drawable.cell_border)
                         text = ""
+                        Log.d(TAG, "❌ EMPTY: $day $time")
                     }
                 }.also { row.addView(it) }
             }
 
             tableLayout.addView(row)
         }
+
+        Log.d(TAG, "🔍 DEBUG: Table built with ${tableLayout.childCount} rows")
     }
 }

@@ -72,6 +72,7 @@ dependencies {
     implementation (libs.glide)
     kapt(libs.compiler)
 
+    implementation (libs.androidx.swiperefreshlayout)
 
     implementation (libs.circleimageview)
     implementation(libs.material.v110)
